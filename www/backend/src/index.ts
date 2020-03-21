@@ -14,6 +14,7 @@ startImap().then(() =>
 
 			app.use(cors({ origin: expressConfig.cors.whitelist }));
 			app.use(compression());
+
 			getRouters().forEach(route => app.use(route()));
 
 			if (existsSync(buildPath) === true) {

@@ -8,6 +8,7 @@
         "email": "alexis.bize@gmail.com"
     },
     "scripts": {
+        "now-build": "npm run build",
         "build": "npm run clean && ./node_modules/.bin/tsc",
         "clean": "rm -rf ./dist",
         "serve": "node -r ./node_modules/dotenv/config ./dist/index.js dotenv_config_path=../../.env-development",

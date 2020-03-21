@@ -1,3 +1,4 @@
 .env-*
+.now/
 node_modules/
 dist/

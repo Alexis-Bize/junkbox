@@ -58,7 +58,7 @@ const handlePullTarget = async (req: Request, res: Response) => {
 	return res.send(response);
 };
 
-const handleLoadBody = async (req: Request, res: Response) => {
+const handleReadBody = async (req: Request, res: Response) => {
 	const { id, hash } = req.query as {
 		id?: string;
 		hash?: string;
@@ -84,8 +84,8 @@ const handleLoadBody = async (req: Request, res: Response) => {
 const router = Router();
 
 router.get('/ping', handlePing);
-router.get('/load-body', (req, res) =>
-	handleLoadBody(req, res).catch(err => {
+router.get('/read-body', (req, res) =>
+	handleReadBody(req, res).catch(err => {
 		console.error(err);
 		return res.sendStatus(500);
 	})

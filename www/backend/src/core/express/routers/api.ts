@@ -64,7 +64,7 @@ const handleReadBody = async (req: Request, res: Response) => {
 		hash?: string;
 	};
 
-	if (id === void 0 || isNaN(Number(id)) === true) {
+	if (isNaN(Number(id)) === true || id === void 0) {
 		return res
 			.status(400)
 			.send({ error: 'Missing or invalid "id" query parameter.' });

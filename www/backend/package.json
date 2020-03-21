@@ -11,7 +11,7 @@
     "scripts": {
         "build": "npm run clean && ./node_modules/.bin/tsc",
         "clean": "rm -rf ./dist",
-        "serve": "node -r ./node_modules/dotenv/config ./dist/start-production.js dotenv_config_path ../../.env",
+        "serve": "node -r ./node_modules/dotenv/config ./dist/index.js dotenv_config_path=../../.env-development",
         "start": "if [[ $NODE_ENV == \"production\" ]]; then npm run serve; else npm run watch; fi",
         "start:frontend": "npm start --prefix ../frontend",
         "watch": "./node_modules/.bin/tsc-watch --onSuccess \"npm run start:frontend\"",
@@ -19,6 +19,7 @@
         "lint": "./node_modules/.bin/tslint -p ./tsconfig.json -c ./tslint.json"
     },
     "dependencies": {
+        "cors": "^2.8.5",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "imap": "^0.8.19"

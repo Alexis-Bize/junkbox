@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { pullForId } from '../../../modules/imap';
+import { pullForId } from '../../imap/actions';
 
 //#region router
 

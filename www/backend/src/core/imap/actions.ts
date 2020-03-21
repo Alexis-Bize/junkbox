@@ -20,7 +20,7 @@ export const pullForId = async (
 		pullLimit = config.maxPullLimit;
 	}
 
-	const fetch = getInstance().seq.fetch(`1:${pullLimit}`, {
+	getInstance().seq.fetch(`1:${pullLimit}`, {
 		bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)',
 		struct: true
 	});

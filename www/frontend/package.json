@@ -1,0 +1,24 @@
+{
+    "name": "frontend",
+    "description": "",
+    "version": "1.0.0",
+    "private": true,
+    "license": "MIT",
+    "author": {
+        "name": "Alexis Bize",
+        "email": "alexis.bize@gmail.com"
+    },
+    "scripts": {
+        "build": "",
+        "serve": "",
+        "start": "",
+        "watch": "",
+        "test": "",
+        "lint": ""
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/node": "^13.9.2",
+        "typescript": "^3.8.3"
+    }
+}

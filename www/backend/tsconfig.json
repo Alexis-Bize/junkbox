@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"target": "es2016",
+		"module": "commonjs",
+		"outDir": "./dist",
+		"strict": true,
+		"sourceMap": false,
+		"alwaysStrict": true,
+		"removeComments": true,
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"noEmitOnError": true,
+		"noImplicitReturns": true,
+		"noUnusedParameters": true,
+		"skipLibCheck": false
+	},
+	"include": ["./src/**/*", "./src/env.d.ts"],
+	"exclude": ["./node_modules"]
+}

@@ -1,0 +1,33 @@
+{
+    "name": "backend",
+    "description": "",
+    "version": "1.0.0",
+    "private": true,
+    "license": "MIT",
+    "author": {
+        "name": "Alexis Bize",
+        "email": "alexis.bize@gmail.com"
+    },
+    "scripts": {
+        "build": "npm run clean && ./node_modules/.bin/tsc",
+        "clean": "rm -rf ./dist",
+        "serve": "node -r ./node_modules/dotenv/config ./dist/start-production.js dotenv_config_path ../../.env",
+        "start": "if [[ $NODE_ENV == \"production\" ]]; then npm run serve; else npm run watch; fi",
+        "start:frontend": "npm start --prefix ../frontend",
+        "watch": "./node_modules/.bin/tsc-watch --onSuccess \"npm run start:frontend\"",
+        "test": "./node_modules/.bin/jest --verbose --coverage --detectOpenHandles",
+        "lint": "./node_modules/.bin/tslint -p ./tsconfig.json -c ./tslint.json"
+    },
+    "dependencies": {
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "imap": "^0.8.19"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.3",
+        "@types/imap": "^0.8.30",
+        "@types/node": "^13.9.2",
+        "typescript": "^3.8.3",
+        "tsc-watch": "^4.2.3"
+    }
+}

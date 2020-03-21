@@ -1,7 +1,7 @@
-import config from '../config';
-import { getInstance } from '..';
+import config from './config';
+import { getInstance } from '.';
 import { parseHeader } from 'imap';
-import { rand, createSignedHash } from '../../../modules/crypto';
+import { rand, createSignedHash } from '../../modules/crypto';
 
 //#region public methods
 

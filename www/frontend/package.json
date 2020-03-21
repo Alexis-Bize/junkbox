@@ -1,24 +1,40 @@
 {
-    "name": "frontend",
-    "description": "",
-    "version": "1.0.0",
-    "private": true,
-    "license": "MIT",
-    "author": {
-        "name": "Alexis Bize",
-        "email": "alexis.bize@gmail.com"
-    },
-    "scripts": {
-        "build": "",
-        "serve": "",
-        "start": "",
-        "watch": "",
-        "test": "",
-        "lint": ""
-    },
-    "dependencies": {},
-    "devDependencies": {
-        "@types/node": "^13.9.2",
-        "typescript": "^3.8.3"
-    }
+	"name": "frontend",
+	"version": "1.0.0",
+	"private": true,
+	"license": "MIT",
+	"author": {
+		"name": "Alexis Bize",
+		"email": "alexis.bize@gmail.com"
+	},
+	"dependencies": {
+		"react": "^16.13.1",
+		"react-dom": "^16.13.1",
+		"react-scripts": "3.4.1"
+	},
+	"devDependencies": {
+		"@types/node": "^12.12.30",
+		"@types/react": "^16.9.25",
+		"@types/react-dom": "^16.9.5",
+		"typescript": "^3.7.5"
+	},
+	"scripts": {
+		"start": "./node_modules/.bin/react-scripts start",
+		"build": "./node_modules/.bin/react-scripts build"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
 }

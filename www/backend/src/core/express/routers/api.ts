@@ -12,11 +12,6 @@ import {
 
 //#region handlers
 
-const handlePing = (_req: Request, res: Response) =>
-	res.send({
-		alive: true
-	});
-
 const handleCreateTarget = (_req: Request, res: Response) => {
 	const target = createTarget();
 
@@ -83,21 +78,22 @@ const handleReadBody = async (req: Request, res: Response) => {
 
 const router = Router();
 
-router.get('/ping', handlePing);
-router.get('/read-body', (req, res) =>
+router.get('/api/create-target', handleCreateTarget);
+router.get('/api/pull-target', (req, res) =>
+	handlePullTarget(req, res).catch(err => {
+		console.error(err);
+		return res.sendStatus(500);
+	})
+);
+
+router.get('/api/read-body', (req, res) =>
 	handleReadBody(req, res).catch(err => {
 		console.error(err);
 		return res.sendStatus(500);
 	})
 );
 
-router.get('/create-target', handleCreateTarget);
-router.get('/pull-target', (req, res) =>
-	handlePullTarget(req, res).catch(err => {
-		console.error(err);
-		return res.sendStatus(500);
-	})
-);
+router.get('^/api(/.*)?', (_req, res) => res.sendStatus(404));
 
 export default () => router;
 

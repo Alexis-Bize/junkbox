@@ -1,1 +1,1 @@
-# Disposable email
+# Junkbox - Disposable email

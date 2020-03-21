@@ -1,6 +1,7 @@
 import * as express from 'express';
 import { Server } from 'http';
 import { Express } from 'express';
+import api from './routers/api';
 import config from './config';
 
 //#region typings
@@ -49,5 +50,7 @@ export const getServer = () => {
 	if (__SERVER__ === null) throw new Error('Box not set.');
 	else return __SERVER__;
 };
+
+export const getRouters = () => [api];
 
 //#endregion

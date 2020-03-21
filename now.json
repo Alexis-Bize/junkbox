@@ -1,4 +1,12 @@
 {
     "version": 2,
-    "public": false
+    "public": false,
+    "scope": "alexis-bize",
+    "alias": ["junkbox"],
+    "env": {
+        "IMAP_USER": "@junkbox-imap-user",
+        "IMAP_PASSWORD": "@junkbox-imap-password",
+        "IMAP_HOST": "@junkbox-imap-host",
+        "HASH_KEY": "@junkbox-hash-key"
+    }
 }

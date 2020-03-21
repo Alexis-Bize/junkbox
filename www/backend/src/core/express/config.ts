@@ -4,6 +4,10 @@ export default {
 		port: 8900
 	},
 	cors: {
-		whitelist: ['https://disposable.now.sh', 'https://dispsbl.email']
+		whitelist: [
+			'https://junkbox.one',
+			'https://junkbox.now.sh',
+			'https://dispsbl.email'
+		]
 	}
 };

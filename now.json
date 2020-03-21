@@ -1,8 +1,9 @@
 {
-    "version": 2,
-    "public": false,
+    "name": "junkbox",
     "scope": "alexis-bize",
-    "alias": ["junkbox"],
+    "alias": ["junkbox.now.sh"],
+    "public": false,
+    "version": 2,
     "env": {
         "IMAP_USER": "@junkbox-imap-user",
         "IMAP_PASSWORD": "@junkbox-imap-password",

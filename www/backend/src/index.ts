@@ -18,7 +18,7 @@ startImap()
 				 * @see now.json
 				 */
 				if (process.env.NOW_LAMBDA === 'yes') {
-					getRouters().forEach(router => app.use(router()));
+					getRouters().forEach(router => app.use('/api', router()));
 					return;
 				}
 

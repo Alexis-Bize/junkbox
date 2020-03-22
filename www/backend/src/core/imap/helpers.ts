@@ -29,7 +29,7 @@ export const createBox = () => {
 
 export const isBoxValid = (target: string = '') => {
 	const { min, max } = config.boxLengths;
-	const regexp = new RegExp(`^([a-z0-9]+){${min},${max}}$`, 'g');
+	const regexp = new RegExp(`^([a-z0-9\-]+){${min},${max}}$`, 'g');
 	return target.length !== 0 && regexp.test(target);
 };
 

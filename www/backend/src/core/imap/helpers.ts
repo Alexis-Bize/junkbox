@@ -28,6 +28,14 @@ export const createBox = () => {
 };
 
 export const isBoxValid = (target: string = '') => {
+	const isDefaultValue =
+		config.box.useUniqueBox === true &&
+		target === config.box.uniqueBoxValue;
+
+	if (isDefaultValue === true) {
+		return true;
+	}
+
 	const { min, max } = config.box.lengths;
 	const regexp = new RegExp(`^([a-z0-9\-]+){${min},${max}}$`, 'g');
 	return target.length !== 0 && regexp.test(target);

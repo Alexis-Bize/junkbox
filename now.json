@@ -7,7 +7,9 @@
 		"IMAP_USER": "@junkbox-imap-user",
 		"IMAP_PASSWORD": "@junkbox-imap-password",
 		"IMAP_HOST": "@junkbox-imap-host",
-		"HASH_KEY": "@junkbox-hash-key"
+		"HASH_KEY": "@junkbox-hash-key",
+		"UNIQUE_BOX": "false",
+		"UNIQUE_BOX_VALUE": "demo-box"
 	},
 	"builds": [
 		{

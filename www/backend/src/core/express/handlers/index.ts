@@ -16,7 +16,9 @@ import {
 
 export const handleCreateBox = (_req: Request, res: Response) => {
 	const box =
-		(imapConfig.box.lock && imapConfig.box.lockedValue) || createBox();
+		(imapConfig.box.useUniqueBox && imapConfig.box.uniqueBoxValue) ||
+		createBox();
+
 	return res.send({
 		box,
 		domain: imapConfig.box.domain,

@@ -12,8 +12,9 @@
 		"noEmitOnError": true,
 		"noImplicitReturns": true,
 		"noUnusedParameters": true,
-		"skipLibCheck": false
+		"skipLibCheck": false,
+		"esModuleInterop": false
 	},
-	"include": ["./src/**/*", "./src/env.d.ts"],
+	"include": ["./src/**/*"],
 	"exclude": ["./node_modules"]
 }

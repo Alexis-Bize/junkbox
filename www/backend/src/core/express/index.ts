@@ -11,7 +11,6 @@ type Options = {
 };
 
 //#endregion
-
 //#region definitions
 
 let __INSTANCE__: null | Express = null;
@@ -51,6 +50,6 @@ export const getServer = () => {
 	else return __SERVER__;
 };
 
-export const getRouters = () => [api];
+export const getRouters = () => [{ name: 'api', fn: api }];
 
 //#endregion

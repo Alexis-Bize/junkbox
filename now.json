@@ -1,0 +1,44 @@
+{
+	"scope": "junkbox",
+	"public": false,
+	"version": 2,
+	"env": {
+		"NOW_LAMBDA": "yes",
+		"IMAP_USER": "@junkbox-imap-user",
+		"IMAP_PASSWORD": "@junkbox-imap-password",
+		"IMAP_HOST": "@junkbox-imap-host",
+		"HASH_KEY": "@junkbox-hash-key"
+	},
+	"builds": [
+		{
+			"src": "/www/backend/src/*.ts",
+			"use": "@now/node",
+			"config": {
+				"distDir": "dist"
+			}
+		},
+		{
+			"src": "/www/frontend/package.json",
+			"use": "@now/static-build",
+			"config": {
+				"distDir": "build"
+			}
+		}
+	],
+	"routes": [
+		{
+            "src": "/api(/.*)?",
+            "dest": "/www/backend/index.js"
+		},
+        {
+            "src": "/static(/.*)?",
+            "headers": { "cache-control": "s-maxage=31536000,immutable" },
+            "dest": "/www/frontend/static/$1"
+		},
+		{
+            "src": "/(.*)",
+            "headers": { "cache-control": "s-maxage=0" },
+			"dest": "/www/frontend/index.html"
+        }
+    ]
+}

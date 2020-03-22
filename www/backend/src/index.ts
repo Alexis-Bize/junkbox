@@ -7,22 +7,34 @@ import { start as startImap } from './core/imap';
 import { existsSync } from 'fs';
 import { join } from 'path';
 
-startImap().then(() =>
-	startExpress({
-		beforeStart: async app => {
-			const buildPath = join(__dirname, '../../frontend/dist');
+startImap()
+	.then(() =>
+		startExpress({
+			beforeStart: async app => {
+				app.use(cors({ origin: expressConfig.cors.whitelist }));
+				app.use(compression());
 
-			app.use(cors({ origin: expressConfig.cors.whitelist }));
-			app.use(compression());
+				getRouters().forEach(router => {
+					if (router.name === 'api') {
+						const prefix =
+							expressConfig.useApiPrefix === true ? '/api/' : '/';
+						app.use(prefix + router.fn());
+					} else app.use(router.fn());
+				});
 
-			getRouters().forEach(route => app.use(route()));
+				if (process.env.NOW_LAMBDA !== 'yes') {
+					const buildPath = join(__dirname, '../../frontend/dist');
 
-			if (existsSync(buildPath) === true) {
-				app.use(expressStatic(buildPath));
-				app.get('/*', (_, res) =>
-					res.sendFile(join(buildPath, 'index.html'))
-				);
-			} else throw new Error('Frontend has not been builded.');
-		}
-	})
-);
+					if (existsSync(buildPath) === true) {
+						app.use(expressStatic(buildPath));
+						app.get('/*', (_, res) =>
+							res.sendFile(join(buildPath, 'index.html'))
+						);
+					} else throw new Error('Frontend has not been builded.');
+				}
+			}
+		})
+	)
+	.catch(err => {
+		console.error(err);
+	});

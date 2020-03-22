@@ -1,4 +1,4 @@
 .env-*
-.now/
-node_modules/
-dist/
+.now
+node_modules
+dist

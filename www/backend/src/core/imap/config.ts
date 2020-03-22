@@ -1,6 +1,6 @@
 export default {
 	domain: (process.env.IMAP_USER || '').split('@')[1] || '',
-	targetLengths: {
+	boxLengths: {
 		min: 6,
 		max: 12
 	},

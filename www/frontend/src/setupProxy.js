@@ -3,7 +3,7 @@ const { existsSync } = require('fs');
 
 const loadBackendRouters = app => {
 	const { getRouters } = require('../../backend/dist/core/express');
-	getRouters().forEach(route => app.use(route.fn()));
+	getRouters().forEach(router => app.use('/api', router()));
 };
 
 /**

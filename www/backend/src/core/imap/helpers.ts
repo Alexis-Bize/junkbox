@@ -20,20 +20,20 @@ export type Metadata = {
 //#endregion
 //#region public methods
 
-export const createTarget = () => {
-	const { min, max } = config.targetLengths;
+export const createBox = () => {
+	const { min, max } = config.boxLengths;
 	const chars = 'abcdefghijklmnopqrstuvwxyz123567890';
 	const length = Math.floor(Math.random() * (max - min + 1)) + min;
 	return rand(length, chars);
 };
 
-export const isTargetValid = (target: string = '') => {
-	const { min, max } = config.targetLengths;
+export const isBoxValid = (target: string = '') => {
+	const { min, max } = config.boxLengths;
 	const regexp = new RegExp(`^([a-z0-9]+){${min},${max}}$`, 'g');
 	return target.length !== 0 && regexp.test(target);
 };
 
-export const pullIdsForTarget = (target: string = ''): Promise<number[]> =>
+export const pullIdsForBox = (target: string = ''): Promise<number[]> =>
 	new Promise((resolve, reject) => {
 		if (target.length === 0) {
 			return reject(new Error('Specified "target" is invalid.'));

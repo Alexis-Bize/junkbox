@@ -14,29 +14,26 @@ startImap()
 				app.use(cors({ origin: expressConfig.cors.whitelist }));
 				app.use(compression());
 
-				getRouters().forEach(router => {
-					const prefixApiRoutes =
-						router.name === 'api' &&
-						expressConfig.useApiPrefix === true;
-
-					if (prefixApiRoutes === true) {
-						app.use('/api', router.fn());
-					} else app.use(router.fn());
-				});
-
-				if (process.env.NOW_LAMBDA !== 'yes') {
-					const buildPath = join(__dirname, '../../frontend/dist');
-
-					if (existsSync(buildPath) === true) {
-						app.use(expressStatic(buildPath));
-						app.get('/*', (_, res) =>
-							res.sendFile(join(buildPath, 'index.html'))
-						);
-					} else throw new Error('Frontend has not been builded.');
+				/**
+				 * @see now.json
+				 */
+				if (process.env.NOW_LAMBDA === 'yes') {
+					getRouters().forEach(router => app.use(router()));
+					return;
 				}
+
+				const buildPath = join(__dirname, '../../frontend/dist');
+
+				if (existsSync(buildPath) === true) {
+					app.use(expressStatic(buildPath));
+					app.get('/*', (_, res) =>
+						res.sendFile(join(buildPath, 'index.html'))
+					);
+				} else throw new Error('Frontend has not been builded.');
 			}
 		})
 	)
 	.catch(err => {
 		console.error(err);
+		process.exit(1);
 	});

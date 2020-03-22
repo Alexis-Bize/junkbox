@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { Server } from 'http';
 import { Express } from 'express';
-import api from './routers/api';
+import routers from './routers';
 import config from './config';
 
 //#region typings
@@ -50,6 +50,6 @@ export const getServer = () => {
 	else return __SERVER__;
 };
 
-export const getRouters = () => [{ name: 'api', fn: api }];
+export const getRouters = () => routers;
 
 //#endregion

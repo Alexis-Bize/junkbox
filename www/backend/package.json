@@ -25,6 +25,7 @@
     "devDependencies": {
         "@types/compression": "^1.7.0",
         "@types/cors": "^2.8.6",
+        "@types/dotenv": "^8.2.0",
         "@types/express": "^4.17.3",
         "@types/imap": "^0.8.30",
         "@types/node": "^13.9.2",

@@ -1,3 +1,4 @@
+import './enviroment';
 import * as cors from 'cors';
 import * as compression from 'compression';
 import expressConfig from './core/express/config';

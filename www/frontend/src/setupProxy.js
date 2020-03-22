@@ -1,9 +1,14 @@
 const { join } = require('path');
 const { existsSync } = require('fs');
 
-const loadBackendRouters = app => {
+const assignBackendRoutes = app => {
 	const { getRouters } = require('../../backend/dist/core/express');
 	getRouters().forEach(router => app.use('/api', router()));
+};
+
+const loadBackendImap = () => {
+	const imap = require('../../backend/dist/core/imap');
+	return imap.start();
 };
 
 /**
@@ -13,5 +18,8 @@ const loadBackendRouters = app => {
 module.exports = app => {
 	if (!existsSync(join(__dirname, '../../backend/dist'))) {
 		console.warn('Backend not builded, skipping development proxy...');
-	} else loadBackendRouters(app);
+	} else require('../../backend/dist/environment');
+
+	assignBackendRoutes(app);
+	loadBackendImap(app).catch(console.error);
 };

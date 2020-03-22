@@ -1,4 +1,4 @@
-import './enviroment';
+import './environment';
 import * as cors from 'cors';
 import * as compression from 'compression';
 import expressConfig from './core/express/config';
@@ -15,10 +15,15 @@ startImap()
 				app.use(cors({ origin: expressConfig.cors.whitelist }));
 				app.use(compression());
 
+				const routeBuildPath = !(
+					process.env.NOW_LAMBDA === 'yes' ||
+					process.env.NODE_ENV === 'production'
+				);
+
 				/**
 				 * @see now.json
 				 */
-				if (process.env.NOW_LAMBDA === 'yes') {
+				if (routeBuildPath === false) {
 					getRouters().forEach(router => app.use('/api', router()));
 					return;
 				}

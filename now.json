@@ -28,7 +28,7 @@
 	"routes": [
 		{
             "src": "/api(/.*)?",
-            "dest": "/www/backend/index.js"
+            "dest": "/www/backend/src/index.ts"
 		},
         {
             "src": "/static(/.*)?",

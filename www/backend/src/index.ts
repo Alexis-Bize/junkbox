@@ -15,10 +15,12 @@ startImap()
 				app.use(compression());
 
 				getRouters().forEach(router => {
-					if (router.name === 'api') {
-						const prefix =
-							expressConfig.useApiPrefix === true ? '/api/' : '/';
-						app.use(prefix + router.fn());
+					const prefixApiRoutes =
+						router.name === 'api' &&
+						expressConfig.useApiPrefix === true;
+
+					if (prefixApiRoutes === true) {
+						app.use('/api', router.fn());
 					} else app.use(router.fn());
 				});
 

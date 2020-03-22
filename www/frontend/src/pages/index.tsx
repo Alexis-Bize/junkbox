@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { DeleteOutlined, CopyOutlined, RedoOutlined } from '@ant-design/icons';
 
 import {
-	DeleteOutlined,
-	CopyOutlined,
-	ReloadOutlined
-} from '@ant-design/icons';
-
-import {
+	Spin,
+	Modal,
+	Tooltip,
 	Descriptions,
 	PageHeader,
 	Layout,
@@ -45,12 +43,17 @@ const Index = () => {
 		count: number;
 	}>(null);
 
+	const [showModal, setModal] = useState<boolean>(false);
+	const [pulling, setPulling] = useState<boolean>(false);
+
 	const pullMailbox = useCallback(async () => {
 		if (mailbox !== null) {
+			setPulling(true);
 			const qs = `box=${mailbox.box}&hash=${mailbox.hash}`;
 			const result = await fetch(`/api/mailbox/pull?${qs}`);
 			const json = await result.json();
 			setData(json);
+			setPulling(false);
 		}
 	}, [mailbox]);
 
@@ -68,6 +71,27 @@ const Index = () => {
 
 	return (
 		<Layout id="junkbox-pages-index" style={{ height: '100vh' }}>
+			<Modal
+				okType="danger"
+				okText="Delete"
+				title="Delete this email address"
+				visible={showModal}
+				onOk={() => {
+					requestMailbox().then(() => {
+						setModal(false);
+					});
+				}}
+				onCancel={() => setModal(false)}>
+				<p>
+					This action will delete <strong>all existing mails</strong>{' '}
+					in this mailbox and a new one will be assigned to you.
+				</p>
+				<p>
+					Please note that this email address could be{' '}
+					<strong>randomly generated once again</strong> by you or
+					someone else.
+				</p>
+			</Modal>
 			<Layout.Header
 				id="junkbox-components-header"
 				style={{
@@ -97,21 +121,37 @@ const Index = () => {
 					<Input
 						addonAfter={
 							<div>
-								<Button type="dashed" icon={<CopyOutlined />} />{' '}
-								<Button
-									onClick={() =>
-										mailbox !== null
-											? pullMailbox()
-											: void 0
-									}
-									type="default"
-									icon={<ReloadOutlined />}
-								/>{' '}
-								<Button
-									onClick={requestMailbox}
-									type="danger"
-									icon={<DeleteOutlined />}
-								/>
+								<Tooltip
+									placement="bottom"
+									title={'Copy to clipboard'}>
+									<Button
+										type="dashed"
+										icon={<CopyOutlined />}
+									/>
+								</Tooltip>{' '}
+								<Tooltip
+									placement="bottom"
+									title={'Refresh messages list'}>
+									<Button
+										onClick={() =>
+											mailbox !== null &&
+											pulling === false
+												? pullMailbox()
+												: void 0
+										}
+										type="default"
+										icon={<RedoOutlined />}
+									/>
+								</Tooltip>{' '}
+								<Tooltip
+									placement="bottom"
+									title={'Delete this email address'}>
+									<Button
+										onClick={() => setModal(!showModal)}
+										type="danger"
+										icon={<DeleteOutlined />}
+									/>
+								</Tooltip>
 							</div>
 						}
 						type="email"
@@ -131,36 +171,38 @@ const Index = () => {
 				<Row gutter={[8, 0]}>
 					<Col span={8}>
 						<Layout.Content id="junkbox-components-mails-list">
-							<List
-								itemLayout="horizontal"
-								dataSource={data === null ? [] : data.items}
-								renderItem={item => (
-									<List.Item
-										key={item.id}
-										style={{
-											backgroundColor: 'white',
-											padding: '16px',
-											marginBottom: '8px'
-										}}>
-										<List.Item.Meta
-											avatar={
-												<Avatar
-													style={{
-														color: '#f56a00',
-														backgroundColor:
-															'#fde3cf'
-													}}>
-													{getSenderInitials(
-														item.headers.from
-													)}
-												</Avatar>
-											}
-											title={item.headers.subject}
-											description={item.headers.from}
-										/>
-									</List.Item>
-								)}
-							/>
+							<Spin spinning={pulling}>
+								<List
+									itemLayout="horizontal"
+									dataSource={data === null ? [] : data.items}
+									renderItem={item => (
+										<List.Item
+											key={item.id}
+											style={{
+												backgroundColor: 'white',
+												padding: '16px',
+												marginBottom: '8px'
+											}}>
+											<List.Item.Meta
+												avatar={
+													<Avatar
+														style={{
+															color: '#f56a00',
+															backgroundColor:
+																'#fde3cf'
+														}}>
+														{getSenderInitials(
+															item.headers.from
+														)}
+													</Avatar>
+												}
+												title={item.headers.subject}
+												description={item.headers.from}
+											/>
+										</List.Item>
+									)}
+								/>
+							</Spin>
 						</Layout.Content>
 					</Col>
 					<Col span={16}>
@@ -201,7 +243,45 @@ const Index = () => {
 								backgroundColor: 'white',
 								padding: '16px 24px'
 							}}>
-							<p>Hello you!</p>
+							<div
+								style={{
+									margin: '0 auto'
+								}}>
+								<h3>Keep your real mailbox clean and secure</h3>
+								<p>
+									Forget about spam, advertising mailings,
+									hacking, attacking robots.{' '}
+									<strong>Junkbox</strong> provides temporary,
+									secure, anonymous, free, disposable email
+									addresses.
+								</p>
+								<h3>What is a disposable email address?</h3>
+								<p>
+									A disposable email address is a temporary
+									and completely anonymous email address with
+									a predetermined lifetime that does not
+									require any registration.
+								</p>
+								<h3>Free, and open sourced!</h3>
+								<p>
+									<strong>Junkbox</strong> source code is
+									available on{' '}
+									<a
+										href="https://github.com/Alexis-Bize/junkbox"
+										target="_blank"
+										rel="noreferrer noopener">
+										GitHub
+									</a>{' '}
+									and proudly hosted on{' '}
+									<a
+										href="https://zeit.co/home"
+										target="_blank"
+										rel="noreferrer noopener">
+										zeit.co
+									</a>
+									.
+								</p>
+							</div>
 						</Layout.Content>
 					</Col>
 				</Row>

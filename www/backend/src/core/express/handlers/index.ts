@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { createSignedHash, isHashValid } from '../../../modules/crypto';
 import { onBadRequest } from '../helpers';
+import imapConfig from '../../imap/config';
 
 import {
 	Metadata,
@@ -14,8 +15,13 @@ import {
 //#region handlers
 
 export const handleCreateBox = (_req: Request, res: Response) => {
-	const box = createBox();
-	return res.send({ box, hash: createSignedHash(box) });
+	const box =
+		(imapConfig.box.lock && imapConfig.box.lockedValue) || createBox();
+	return res.send({
+		box,
+		domain: imapConfig.box.domain,
+		hash: createSignedHash(box)
+	});
 };
 
 export const handlePullBox = async (req: Request, res: Response) => {

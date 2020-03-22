@@ -1,8 +1,9 @@
 export default {
-	domain: (process.env.IMAP_USER || '').split('@')[1] || '',
-	boxLengths: {
-		min: 6,
-		max: 12
+	box: {
+		lock: true,
+		lockedValue: 'demo',
+		domain: (process.env.IMAP_USER || '').split('@')[1] || '',
+		lengths: { min: 6, max: 12 }
 	},
 	connection: {
 		user: process.env.IMAP_USER || '',

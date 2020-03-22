@@ -21,14 +21,14 @@ export type Metadata = {
 //#region public methods
 
 export const createBox = () => {
-	const { min, max } = config.boxLengths;
+	const { min, max } = config.box.lengths;
 	const chars = 'abcdefghijklmnopqrstuvwxyz123567890';
 	const length = Math.floor(Math.random() * (max - min + 1)) + min;
 	return rand(length, chars);
 };
 
 export const isBoxValid = (target: string = '') => {
-	const { min, max } = config.boxLengths;
+	const { min, max } = config.box.lengths;
 	const regexp = new RegExp(`^([a-z0-9\-]+){${min},${max}}$`, 'g');
 	return target.length !== 0 && regexp.test(target);
 };
@@ -40,7 +40,7 @@ export const pullIdsForBox = (target: string = ''): Promise<number[]> =>
 		}
 
 		getInstance().search(
-			['ALL', ['TO', `${target.toString().trim()}@${config.domain}`]],
+			['ALL', ['TO', [target, config.box.domain].join('@')]],
 			(err, ids) => {
 				if (err) return reject(err);
 				else return resolve(ids);

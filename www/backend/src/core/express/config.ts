@@ -4,10 +4,9 @@ export default {
 		port: 8900
 	},
 	cors: {
-		whitelist: [
-			'https://junkbox.one',
-			'https://junkbox.now.sh',
-			'https://dispsbl.email'
-		]
+		whitelist:
+			process.env.NODE_ENV === 'production'
+				? ['https://junkbox.one', 'https://junkbox.now.sh']
+				: ['*']
 	}
 };

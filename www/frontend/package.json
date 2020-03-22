@@ -9,10 +9,11 @@
 	},
 	"scripts": {
 		"now-build": "npm run build",
-		"start": "./node_modules/.bin/react-scripts start",
+		"start": "BROWSER=none ./node_modules/.bin/react-scripts start",
 		"build": "./node_modules/.bin/react-scripts build"
 	},
 	"dependencies": {
+		"antd": "^4.0.3",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
 		"react-scripts": "3.4.1"

@@ -8,7 +8,7 @@
 		"IMAP_PASSWORD": "@junkbox-imap-password",
 		"IMAP_HOST": "@junkbox-imap-host",
 		"HASH_KEY": "@junkbox-hash-key",
-		"UNIQUE_BOX": "false",
+		"UNIQUE_BOX": "no",
 		"UNIQUE_BOX_VALUE": "demo-box"
 	},
 	"builds": [
@@ -36,6 +36,11 @@
             "src": "/static(/.*)?",
             "headers": { "cache-control": "s-maxage=31536000,immutable" },
             "dest": "/www/frontend/static/$1"
+		},
+		{
+            "src": "/(favicon.ico|manifest.json|robots.txt)",
+            "headers": { "cache-control": "s-maxage=31536000,immutable" },
+            "dest": "/www/frontend/$1"
 		},
 		{
             "src": "/(.*)",

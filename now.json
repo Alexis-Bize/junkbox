@@ -30,7 +30,8 @@
 	"routes": [
 		{
             "src": "/api(/.*)?",
-            "dest": "/www/backend/src/index.ts"
+			"dest": "/www/backend/src/index.ts",
+			"methods": ["GET", "POST"]
 		},
         {
             "src": "/static(/.*)?",

@@ -1,20 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
-import {
-	DeleteOutlined,
-	CopyOutlined,
-	RedoOutlined,
-	GithubOutlined,
-	MailOutlined,
-	LockOutlined
-} from '@ant-design/icons';
+import WelcomeMail from '../components/mails/WelcomeMail';
+import NoMessageSelected from '../components/mails/NoMessageSelected';
+import { DeleteOutlined, CopyOutlined, RedoOutlined } from '@ant-design/icons';
+import { getSenderInitials } from '../modules/utils';
+import { isWelcomeMailDeleted, deleteBoxCookies } from '../modules/cookies';
 
 import {
 	Spin,
 	Modal,
 	Tooltip,
-	Descriptions,
-	PageHeader,
 	Layout,
 	Input,
 	List,
@@ -24,19 +18,23 @@ import {
 	Col
 } from 'antd';
 
-const getSenderInitials = (from: string) => {
-	const match = from.split('<')[0].match(/[a-zA-Z0-9]+/g) || [];
-	const slice = match.slice(0, 2);
-	const extract = [(slice[0] || '').charAt(0), (slice[1] || '').charAt(0)];
-	return extract.join('').toUpperCase();
-};
-
 const Index = () => {
 	const [mailbox, setMailbox] = useState<null | {
 		box: string;
 		domain: string;
 		hash: string;
 	}>(null);
+
+	const [message, setMessage] = useState<
+		| null
+		| 'welcome-mail'
+		| {
+				uid: string;
+				box: string;
+				hash: string;
+				body: string;
+		  }
+	>('welcome-mail');
 
 	const [data, setData] = useState<null | {
 		items: Array<{
@@ -86,6 +84,7 @@ const Index = () => {
 			})
 		});
 
+		deleteBoxCookies();
 		setMailbox(null);
 	}, [data]);
 
@@ -193,9 +192,16 @@ const Index = () => {
 			<Layout.Content
 				id="junkbox-components-mails"
 				style={{ padding: '8px' }}>
-				<Row gutter={[8, 0]}>
+				<Row
+					gutter={[8, 0]}
+					style={{ height: '100%', overflow: 'auto' }}>
 					<Col span={8}>
-						<Layout.Content id="junkbox-components-mails-list">
+						<Layout.Content
+							id="junkbox-components-mails-list"
+							style={{
+								backgroundColor: 'white',
+								height: '100%'
+							}}>
 							<Spin spinning={pulling}>
 								<List
 									itemLayout="horizontal"
@@ -231,98 +237,15 @@ const Index = () => {
 						</Layout.Content>
 					</Col>
 					<Col span={16}>
-						<Layout.Content
-							id="junkbox-components-mails-view-header"
-							style={{
-								backgroundColor: 'white',
-								marginBottom: '8px'
-							}}>
-							<PageHeader
-								title="Welcome to Junkbox! (ALPHA / WIP)"
-								extra={
-									<Button
-										type="danger"
-										icon={<DeleteOutlined />}>
-										Delete
-									</Button>
-								}>
-								<Descriptions size="small" column={1}>
-									<Descriptions.Item label="From">
-										{mailbox === null
-											? 'Junkbox'
-											: `Junkbox <${[
-													mailbox?.box,
-													mailbox?.domain
-											  ].join('@')}>`}
-									</Descriptions.Item>
-									<Descriptions.Item label="Date">
-										{new Date().toLocaleDateString()} -
-										{new Date().toLocaleTimeString()}
-									</Descriptions.Item>
-								</Descriptions>
-							</PageHeader>
-						</Layout.Content>
-						<Layout.Content
-							id="junkbox-components-mails-view-body"
-							style={{
-								backgroundColor: 'white',
-								padding: '16px 24px'
-							}}>
-							<div
-								style={{
-									margin: '0 auto'
-								}}>
-								<h3>
-									<LockOutlined
-										style={{ marginRight: '8px' }}
-									/>{' '}
-									Keep your real mailbox clean and secure
-								</h3>
-								<p>
-									Forget about spam, advertising mailings,
-									hacking and attacking robots.{' '}
-									<strong>Junkbox</strong> provides temporary,
-									secure, anonymous, free, disposable email
-									addresses.
-								</p>
-								<h3>
-									<MailOutlined
-										style={{ marginRight: '8px' }}
-									/>{' '}
-									What is a disposable email address?
-								</h3>
-								<p>
-									A disposable email address is a temporary
-									and completely anonymous email address with
-									a predetermined lifetime that does not
-									require any registration.
-								</p>
-								<h3>
-									<GithubOutlined
-										style={{ marginRight: '8px' }}
-									/>{' '}
-									Free, and open sourced!
-								</h3>
-								<p>
-									<strong>Junkbox</strong> source code is
-									available on{' '}
-									<a
-										href="https://github.com/Alexis-Bize/junkbox"
-										target="_blank"
-										rel="noreferrer noopener">
-										GitHub
-									</a>{' '}
-									and proudly hosted on{' '}
-									<a
-										href="https://zeit.co/home"
-										target="_blank"
-										rel="noreferrer noopener">
-										zeit.co
-									</a>
-									.
-								</p>
-							</div>
-						</Layout.Content>
+						{(message === 'welcome-mail' &&
+							isWelcomeMailDeleted() === false && (
+								<WelcomeMail
+									onDeleted={() => {
+										setMessage(null);
+									}}
+									mailbox={mailbox}
+								/>
+							)) || <NoMessageSelected />}
 					</Col>
 				</Row>
 			</Layout.Content>

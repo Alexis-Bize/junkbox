@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, CookieOptions } from 'express';
 import { createSignedHash, isHashValid } from '../../../modules/crypto';
 import { onBadRequest } from '..';
 import imapConfig from '../../imap/config';
@@ -7,7 +7,8 @@ import {
 	createBox,
 	isBoxTypeValid,
 	isUidTypeValid,
-	joinIdBox
+	joinIdBox,
+	isBoxValid
 } from '../../imap/helpers';
 
 import {
@@ -17,7 +18,45 @@ import {
 	FetchResponse
 } from '../../imap';
 
-//#region helpers
+//#region utils
+
+const getCookieBox = (cookies?: { [key: string]: string }) => {
+	let cookieBox: string | null = null;
+
+	if (cookies === void 0) {
+		return cookieBox;
+	}
+
+	if (cookies['box_current'] !== void 0) {
+		const explode = String(cookies['box_current']).split('#');
+		const isCookieBoxValid =
+			isBoxValid(explode[0]) && isHashValid(explode[0], explode[1]);
+
+		if (isCookieBoxValid === true) {
+			cookieBox = String(explode[0]);
+		}
+	}
+
+	return cookieBox;
+};
+
+const assignDefaultCookies = (res: Response, box: string, hash: string) => {
+	const defaultCookieOptions: CookieOptions = {
+		httpOnly: false,
+		sameSite: true,
+		encode: value => value,
+		secure: process.env.NODE_ENV === 'production'
+	};
+
+	res.cookie(
+		'box_created_at',
+		new Date().toISOString(),
+		defaultCookieOptions
+	);
+
+	res.cookie('box_current', [box, hash].join('#'), defaultCookieOptions);
+	res.cookie('box_welcome_mail_deleted', 'no', defaultCookieOptions);
+};
 
 const onInvalidProperty = (res: Response, name: string) =>
 	onBadRequest(res, `Invalid or missing "${name}" property.`);
@@ -25,16 +64,24 @@ const onInvalidProperty = (res: Response, name: string) =>
 //#endregion
 //#region handlers
 
-export const handleCreateBox = (_req: Request, res: Response) => {
-	const box =
+export const handleCreateBox = (req: Request, res: Response) => {
+	const cookieBox = getCookieBox(req.cookies);
+	const currentBox =
 		(imapConfig.junkbox.useUniqueBox &&
 			imapConfig.junkbox.uniqueBoxValue) ||
+		cookieBox ||
 		createBox();
 
+	const hash = createSignedHash(currentBox);
+
+	if (cookieBox === null) {
+		assignDefaultCookies(res, currentBox, hash);
+	}
+
 	return res.send({
-		box,
+		box: currentBox,
 		domain: imapConfig.junkbox.domain,
-		hash: createSignedHash(box)
+		hash
 	});
 };
 

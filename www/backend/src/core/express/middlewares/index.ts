@@ -10,5 +10,5 @@ export const loadMiddlewares = (app: Express) => {
 	app.use(compression());
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
-	app.use(errorHandler());
+	app.use(errorHandler);
 };

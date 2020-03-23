@@ -77,6 +77,8 @@ export const handleBatchDeleteFromBox = async (req: Request, res: Response) => {
 
 	if (Array.isArray(items) === false) {
 		return onInvalidProperty(res, 'items');
+	} else if (items.length === 0) {
+		return res.send({ success: true });
 	}
 
 	for (const item of items) {

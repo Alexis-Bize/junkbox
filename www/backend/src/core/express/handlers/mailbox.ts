@@ -92,7 +92,7 @@ export const handleBatchDeleteFromBox = async (req: Request, res: Response) => {
 	}
 
 	await deleteByUids(items.map(item => item.uid));
-	return res.sendStatus(200);
+	return res.send({ success: true });
 };
 
 export const handleReadBoxItem = async (req: Request, res: Response) => {

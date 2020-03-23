@@ -26,5 +26,5 @@ export const createSignedHash = (entry: any) =>
 		.update(String(entry || ''))
 		.digest('hex');
 
-export const isHashValid = (entry: string = '', hash: string = '') =>
+export const isHashValid = (entry: any = '', hash: string = '') =>
 	createSignedHash(entry) === hash;

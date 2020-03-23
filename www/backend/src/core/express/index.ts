@@ -1,55 +1,57 @@
-import * as express from 'express';
-import { Server } from 'http';
-import { Express } from 'express';
-import routers from './routers';
-import config from './config';
+import { Express, Response, static as expressStatic } from 'express';
+import { loadMiddlewares } from './middlewares';
+import { getRouters } from './initializer';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
-//#region typings
+//#region request errors methods
 
-type Options = {
-	beforeStart?: (app: Express) => Promise<any>;
-};
-
-//#endregion
-//#region definitions
-
-let __INSTANCE__: null | Express = null;
-let __SERVER__: null | Server = null;
-
-//#endregion
-//#region public methods
-
-export const start = async (options: Options = {}): Promise<Express> => {
-	const { beforeStart = (_app: Express) => Promise.resolve() } = options;
-
-	const app = express();
-	const host = config.connection.host;
-	const port = Number(config.connection.port);
-
-	__INSTANCE__ = app;
-	const appInstance = getInstance();
-
-	await beforeStart(appInstance);
-	await new Promise((resolve, reject) => {
-		__SERVER__ = appInstance.listen(port, host, err => {
-			if (err) return reject(err);
-			else return resolve();
-		});
+export const onBadRequest = (res: Response, reason = 'Bad request.') =>
+	res.status(400).send({
+		error: reason,
+		statusCode: 400
 	});
 
-	return appInstance;
+export const onNotFound = (res: Response, reason = 'Not found.') =>
+	res.status(404).send({
+		error: reason,
+		statusCode: 404
+	});
+
+export const onError = (res: Response, reason = 'Something went wrong...') =>
+	res.status(500).send({
+		error: reason,
+		statusCode: 500
+	});
+
+//#endregion
+//#region assignation methods
+
+export const assignExpressHandlers = (app: Express) => {
+	loadMiddlewares(app);
+
+	const handleFrontendBuild =
+		process.env.NOW_LAMBDA !== 'yes' &&
+		process.env.NODE_ENV === 'production';
+
+	/**
+	 * @see now.json
+	 */
+	if (handleFrontendBuild === false) {
+		getRouters().forEach(router => app.use('/api', router()));
+		return;
+	}
+
+	const buildPath = join(__dirname, '../../../../frontend/build');
+
+	if (existsSync(buildPath) === true) {
+		app.use(expressStatic(buildPath));
+		app.get('/*', (_, res) => res.sendFile(join(buildPath, 'index.html')));
+	} else throw new Error('Frontend has not been builded.');
 };
 
-export const getInstance = () => {
-	if (__INSTANCE__ === null) throw new Error('Instance not set.');
-	else return __INSTANCE__;
+export const beforeStart = async (app: Express) => {
+	assignExpressHandlers(app);
 };
-
-export const getServer = () => {
-	if (__SERVER__ === null) throw new Error('Box not set.');
-	else return __SERVER__;
-};
-
-export const getRouters = () => routers;
 
 //#endregion

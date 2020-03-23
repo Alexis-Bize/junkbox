@@ -1,6 +1,6 @@
 import mailbox from './mailbox';
 import { Router } from 'express';
-import { onNotFound } from '../helpers';
+import { onNotFound } from '..';
 
 export default [
 	mailbox,

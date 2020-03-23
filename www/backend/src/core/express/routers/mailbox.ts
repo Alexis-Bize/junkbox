@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as handlers from '../handlers';
+import * as handlers from '../handlers/mailbox';
 
 //#endregion
 //#region router
@@ -7,7 +7,6 @@ import * as handlers from '../handlers';
 const router = Router();
 
 router.get('/mailbox', handlers.handleCreateBox);
-
 router.get('/mailbox/pull', (req, res) =>
 	handlers.handlePullBox(req, res).catch(err => {
 		console.error(err);
@@ -21,6 +20,8 @@ router.get('/mailbox/read', (req, res) =>
 		return res.sendStatus(500);
 	})
 );
+
+router.post('/mailbox/batch/delete', handlers.handleBatchDeleteFromBox);
 
 export default () => router;
 

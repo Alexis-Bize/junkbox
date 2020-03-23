@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DeleteOutlined, CopyOutlined, RedoOutlined } from '@ant-design/icons';
+
+import {
+	DeleteOutlined,
+	CopyOutlined,
+	RedoOutlined,
+	GithubOutlined,
+	MailOutlined,
+	LockOutlined
+} from '@ant-design/icons';
 
 import {
 	Spin,
@@ -32,9 +40,10 @@ const Index = () => {
 
 	const [data, setData] = useState<null | {
 		items: Array<{
-			id: string;
+			uid: string;
+			box: string;
 			hash: string;
-			headers: {
+			header: {
 				date: string;
 				subject: string;
 				from: string;
@@ -64,6 +73,22 @@ const Index = () => {
 		setData(null);
 	}, []);
 
+	const deleteMailbox = useCallback(async () => {
+		await fetch('/api/mailbox/batch/delete', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				items: (data?.items || []).map(item => ({
+					uid: item.uid,
+					box: item.box,
+					hash: item.hash
+				}))
+			})
+		});
+
+		setMailbox(null);
+	}, [data]);
+
 	useEffect(() => {
 		if (mailbox === null) requestMailbox();
 		else if (data === null) pullMailbox();
@@ -77,7 +102,7 @@ const Index = () => {
 				title="Delete this email address"
 				visible={showModal}
 				onOk={() => {
-					requestMailbox().then(() => {
+					deleteMailbox().then(() => {
 						setModal(false);
 					});
 				}}
@@ -177,7 +202,7 @@ const Index = () => {
 									dataSource={data === null ? [] : data.items}
 									renderItem={item => (
 										<List.Item
-											key={item.id}
+											key={item.uid}
 											style={{
 												backgroundColor: 'white',
 												padding: '16px',
@@ -192,12 +217,12 @@ const Index = () => {
 																'#fde3cf'
 														}}>
 														{getSenderInitials(
-															item.headers.from
+															item.header.from
 														)}
 													</Avatar>
 												}
-												title={item.headers.subject}
-												description={item.headers.from}
+												title={item.header.subject}
+												description={item.header.from}
 											/>
 										</List.Item>
 									)}
@@ -213,7 +238,7 @@ const Index = () => {
 								marginBottom: '8px'
 							}}>
 							<PageHeader
-								title="Welcome to Junkbox!"
+								title="Welcome to Junkbox! (ALPHA / WIP)"
 								extra={
 									<Button
 										type="danger"
@@ -247,22 +272,37 @@ const Index = () => {
 								style={{
 									margin: '0 auto'
 								}}>
-								<h3>Keep your real mailbox clean and secure</h3>
+								<h3>
+									<LockOutlined
+										style={{ marginRight: '8px' }}
+									/>{' '}
+									Keep your real mailbox clean and secure
+								</h3>
 								<p>
 									Forget about spam, advertising mailings,
-									hacking, attacking robots.{' '}
+									hacking and attacking robots.{' '}
 									<strong>Junkbox</strong> provides temporary,
 									secure, anonymous, free, disposable email
 									addresses.
 								</p>
-								<h3>What is a disposable email address?</h3>
+								<h3>
+									<MailOutlined
+										style={{ marginRight: '8px' }}
+									/>{' '}
+									What is a disposable email address?
+								</h3>
 								<p>
 									A disposable email address is a temporary
 									and completely anonymous email address with
 									a predetermined lifetime that does not
 									require any registration.
 								</p>
-								<h3>Free, and open sourced!</h3>
+								<h3>
+									<GithubOutlined
+										style={{ marginRight: '8px' }}
+									/>{' '}
+									Free, and open sourced!
+								</h3>
 								<p>
 									<strong>Junkbox</strong> source code is
 									available on{' '}

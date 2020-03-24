@@ -2,7 +2,7 @@
 
 Deploy your own disposable emails service based on an existing IMAP server.
 
-<img src="./junkbox-preview.png" width="520" />
+[![Junkbox.one](./junkbox-preview.png)]
 
 ### Requirements
 * An IMAP server (Your own or one created by a provider)

@@ -1,9 +1,10 @@
 import React from 'react';
 import { Layout } from 'antd';
 
+//#region components
+
 const NoMessageSelected = () => (
 	<Layout.Content
-		id="junkbox-components-mails-mail-empty"
 		style={{
 			backgroundColor: 'transparent',
 			marginBottom: '8px',
@@ -21,3 +22,5 @@ const NoMessageSelected = () => (
 );
 
 export default NoMessageSelected;
+
+//#endregion

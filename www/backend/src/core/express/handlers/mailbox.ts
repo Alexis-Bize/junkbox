@@ -108,8 +108,8 @@ export const handlePullBox = async (req: Request, res: Response) => {
 	}
 
 	response.items = await fetchForUids(uids, box, {
-		bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)'],
-		markSeen: false
+		bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT'],
+		markSeen: true
 	});
 
 	response.count = response.items.length;
@@ -142,27 +142,6 @@ export const handleBatchDeleteFromBox = async (req: Request, res: Response) => {
 
 	await deleteByUids(items.map(item => item.uid));
 	return res.send({ success: true });
-};
-
-export const handleReadBoxItem = async (req: Request, res: Response) => {
-	const { uid = '', box = '', hash = '' } = req.query as {
-		uid: string;
-		box: string;
-		hash: string;
-	};
-
-	if (isUidTypeValid(uid) === false) {
-		return onInvalidProperty(res, 'id');
-	} else if (isHashValid(joinIdBox(uid, box), hash) === false) {
-		return onInvalidProperty(res, 'hash');
-	}
-
-	const response = await fetchForUids([Number(uid)], box, {
-		bodies: ['TEXT'],
-		markSeen: true
-	});
-
-	return res.send(response);
 };
 
 //#endregion

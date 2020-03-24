@@ -1,1 +1,19 @@
 @import '~antd/dist/antd.css';
+
+.ant-input-group-addon {
+    padding: 0 4px;
+}
+
+.ant-list-item {
+    background-color: white;
+    cursor: pointer;
+    padding: 16px;
+}
+
+.ant-list-item:hover {
+    background-color: rgba(255, 228, 196, 0.1)
+}
+
+.ant-list-item.selected {
+    border-right: 8px solid #ffcc66;
+}

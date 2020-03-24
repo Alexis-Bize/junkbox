@@ -36,6 +36,8 @@ $ make dev-start
 ```
 
 ### Deployment
-**[Junkbox](https://junkbox.one)** is hosted on [zeit.co](https://zeit.co/home) which is the perfect fit for deploying static sites and serverless functions. You can deploy your own **Junkbox** with the button below or a single command from your terminal using **[Now CLI](https://zeit.co/download)**:
+**[Junkbox](https://junkbox.one)** is hosted on [zeit.co](https://zeit.co/home) which is the perfect fit for deploying static sites and serverless functions. You can deploy your own **Junkbox** with the button below or a single command from your terminal using **[Now CLI](https://zeit.co/download)**.:
 
 [![Deploy with ZEIT Now](https://zeit.co/button)](https://zeit.co/import/project?template=https://github.com/Alexis-Bize/junkbox)
+
+Please not that some secrets are required (see `now.json`).

@@ -15,13 +15,6 @@ router.get('/mailbox/pull', (req, res) =>
 	})
 );
 
-router.get('/mailbox/read', (req, res) =>
-	handlers.handleReadBoxItem(req, res).catch(err => {
-		console.error(err);
-		return onError(res);
-	})
-);
-
 router.post('/mailbox/batch/delete', (req, res) =>
 	handlers.handleBatchDeleteFromBox(req, res).catch(err => {
 		console.error(err);

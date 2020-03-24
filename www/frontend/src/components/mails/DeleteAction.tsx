@@ -4,8 +4,9 @@ import { DeleteOutlined } from '@ant-design/icons';
 
 //#region typings
 
-export type Props = {
+type Props = {
 	onDelete: (uid: number | null) => void;
+	loading?: boolean;
 };
 
 //#endregion
@@ -18,7 +19,10 @@ const DeleteAction = (props: Props) => (
 		okText="Yes, delete it"
 		okType="danger"
 		onConfirm={() => props.onDelete(null)}>
-		<Button type="danger" icon={<DeleteOutlined />}>
+		<Button
+			type="danger"
+			loading={!!props.loading}
+			icon={<DeleteOutlined />}>
 			Delete
 		</Button>
 	</Popconfirm>

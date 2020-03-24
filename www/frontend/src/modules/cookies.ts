@@ -8,7 +8,7 @@ type CookieOptions = {
 //#endregion
 //#region public methods
 
-export const getCookieValue = (name: string) => {
+export const getCookie = (name: string) => {
 	const match = document.cookie.match(
 		'(^|[^;]+)\\s*' + name + '\\s*=\\s*([^;]+)'
 	);
@@ -16,7 +16,7 @@ export const getCookieValue = (name: string) => {
 	return match ? match.pop() : '';
 };
 
-export const createCookie = (
+export const setCookie = (
 	name: string,
 	value: string,
 	options: CookieOptions = {}
@@ -31,7 +31,7 @@ export const createCookie = (
 };
 
 export const isWelcomeMailDeleted = () =>
-	getCookieValue('box_welcome_mail_deleted') === 'yes';
+	getCookie('box_welcome_mail_deleted') === 'yes';
 
 export const deleteBoxCookies = () => {
 	document.cookie.split(';').forEach(c => {

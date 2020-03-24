@@ -1,6 +1,37 @@
-export const getSenderInitials = (sender: string) => {
-	const match = sender.split('<')[0].match(/[a-zA-Z0-9]+/g) || [];
-	const slice = match.slice(0, 2);
-	const extract = [(slice[0] || '').charAt(0), (slice[1] || '').charAt(0)];
-	return extract.join('').toUpperCase();
+export const stringify = <T extends any>(entries: T) => {
+	const output: string[] = [];
+
+	for (const entry of Object.keys(entries) as Array<keyof typeof entries>) {
+		output.push(`${entry}=${encodeURIComponent(entries[entry])}`);
+	}
+
+	return output.join('&');
+};
+
+/** @see https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f */
+export const copyToClipboard = (str: string) => {
+	const elem = document.createElement('textarea');
+
+	elem.value = str;
+	elem.setAttribute('readonly', '');
+	elem.style.position = 'absolute';
+	elem.style.left = '-9999px';
+
+	document.body.appendChild(elem);
+	const selection = document.getSelection();
+
+	if (selection !== null) {
+		const selected =
+			selection.rangeCount > 0 ? selection.getRangeAt(0) : false;
+
+		elem.select();
+		document.execCommand('copy');
+
+		if (selected !== false) {
+			selection.removeAllRanges();
+			selection.addRange(selected);
+		}
+	}
+
+	document.body.removeChild(elem);
 };

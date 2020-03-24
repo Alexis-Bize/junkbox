@@ -13,7 +13,7 @@ export type Props = {
 
 const DeleteAction = (props: Props) => (
 	<Popconfirm
-		title="Would you like to delete this email?"
+		title="Are you sure you want to delete this email?"
 		placement="bottomLeft"
 		okText="Yes, delete it"
 		okType="danger"

@@ -2,14 +2,14 @@ import * as React from 'react';
 import { Layout, Input, Tooltip, Button } from 'antd';
 import { copyToClipboard } from '../modules/utils';
 import { DeleteOutlined, CopyOutlined, RedoOutlined } from '@ant-design/icons';
-import { concatBoxDomain } from '../modules/helpers';
+import { concatBoxDomain } from '../modules/mailbox';
 import { Mailbox } from '../types';
 
 //#region typings
 
 export type Props = {
-	pullMailbox: () => void;
-	deleteMailbox: () => void;
+	pullMessages: () => void;
+	askForDelete: () => void;
 	mailbox: Mailbox;
 };
 
@@ -17,7 +17,7 @@ export type Props = {
 //#region utils
 
 const Header = (props: Props) => {
-	const { mailbox, pullMailbox, deleteMailbox } = props;
+	const { mailbox, pullMessages, askForDelete } = props;
 
 	return (
 		<Layout.Header
@@ -71,7 +71,7 @@ const Header = (props: Props) => {
 								placement="bottom"
 								title={'Refresh messages list'}>
 								<Button
-									onClick={pullMailbox}
+									onClick={pullMessages}
 									loading={mailbox === null}
 									type="default"
 									icon={<RedoOutlined />}
@@ -81,7 +81,7 @@ const Header = (props: Props) => {
 								placement="bottom"
 								title={'Delete this email address'}>
 								<Button
-									onClick={deleteMailbox}
+									onClick={askForDelete}
 									loading={mailbox === null}
 									type="danger"
 									icon={<DeleteOutlined />}

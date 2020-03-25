@@ -5,10 +5,10 @@ export type MailboxResponse = {
 };
 
 export type MessageResponse = {
-	uid: number;
+	uid: number | null;
 	box: string;
-	hash: string;
-	body: string;
+	hash: string | null;
+	body: string | null;
 	header: {
 		date: string;
 		subject: string;
@@ -19,6 +19,6 @@ export type MessageResponse = {
 export type MessagesListResponse = Array<MessageResponse>;
 
 export type Mailbox = null | MailboxResponse;
-export type Message = null | MessageResponse | 'welcome-mail';
+export type Message = null | MessageResponse;
 export type MessagesList = null | MessagesListResponse;
 export type WelcomeMailItem = Omit<Required<MessageResponse>, 'body'>;

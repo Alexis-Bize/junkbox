@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import List from '../components/mails/List';
-import MessageView from '../components/mails/MessageView';
-import DeleteMailboxModal from '../components/mails/DeleteMailboxModal';
-import { deleteBoxCookies } from '../modules/cookies';
-import { stringify } from '../modules/utils';
+import MessageView from '../components/messages/MessageView';
+import DeleteMailboxModal from '../components/modals/DeleteMailbox';
 import { Layout, Row, Col } from 'antd';
-import { Mailbox, Message, MessagesList, MessageResponse } from '../types';
+import { isWelcomeMailDeleted, deleteBoxCookies } from '../modules/cookies';
+import { Mailbox, Message, MessagesList, MailboxResponse } from '../types';
+
+import {
+	pullMessages,
+	getWelcomeMailResponse,
+	requestMailbox,
+	batchDeleteMessages,
+	BatchDeletePayload
+} from '../modules/mailbox';
 
 //#region component
 
@@ -14,87 +21,98 @@ const Index = () => {
 	//#region hooks
 
 	const [mailbox, setMailbox] = useState<Mailbox>(null);
-	const [message, setMessage] = useState<Message>('welcome-mail');
+	const [message, setMessage] = useState<Message>(null);
 	const [messages, setMessages] = useState<MessagesList>(null);
-	const [showModal, setModal] = useState<boolean>(false);
-	const [pulling, setPulling] = useState<boolean>(false);
+	const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 
-	const pullMailbox = useCallback(async () => {
-		if (mailbox !== null) {
-			setPulling(true);
-			const qs = stringify({ box: mailbox.box, hash: mailbox.hash });
-			const result = await fetch(`/api/mailbox/pull?${qs}`);
-			const json = await result.json();
-			setMessages(json.items);
-			setPulling(false);
+	const setWelcomeMessageHook = useCallback(() => {
+		const shouldSetWelcomeMessage =
+			mailbox !== null &&
+			message === null &&
+			isWelcomeMailDeleted() === false;
 
-			if (message === null) {
-				setMessage('welcome-mail');
-			}
+		if (shouldSetWelcomeMessage === true) {
+			setMessage(getWelcomeMailResponse(mailbox as MailboxResponse));
 		}
 	}, [mailbox, message]);
 
-	const requestMailbox = useCallback(async () => {
-		const result = await fetch('/api/mailbox');
-		const json = await result.json();
-		setMailbox(json);
-		setMessages(null);
-	}, []);
+	const requestMailboxHook = useCallback(
+		async (force = false) => {
+			setLoading(true);
 
-	const deleteMailbox = useCallback(async () => {
-		await fetch('/api/mailbox/batch/delete', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				items: (messages || []).map(item => ({
-					uid: item.uid,
-					box: item.box,
-					hash: item.hash
-				}))
-			})
-		});
+			if (mailbox === null || force === true) {
+				const response = await requestMailbox();
+				setMailbox(response);
+			}
 
-		deleteBoxCookies();
-		setMailbox(null);
-	}, [messages]);
-
-	const deleteMessage = useCallback(
-		async (item: Pick<MessageResponse, 'uid' | 'box' | 'hash'>) => {
-			await fetch('/api/mailbox/batch/delete', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					items: [{ uid: item.uid, box: item.box, hash: item.hash }]
-				})
-			});
-
-			setMessage(null);
-			setMessages(null);
+			setLoading(false);
 		},
-		[]
+		[mailbox]
 	);
 
+	const pullMessagesHook = useCallback(async () => {
+		if (mailbox !== null) {
+			setLoading(true);
+			const response = await pullMessages(mailbox);
+			setMessages(response);
+			setWelcomeMessageHook();
+			setLoading(false);
+		}
+	}, [mailbox, setWelcomeMessageHook]);
+
+	const batchDeleteMessagesHook = useCallback(
+		async (payload: BatchDeletePayload) => {
+			setLoading(true);
+			await batchDeleteMessages(payload);
+			setMessage(null);
+			await pullMessagesHook();
+			setLoading(false);
+		},
+		[pullMessagesHook]
+	);
+
+	const deleteMailboxHook = async (payload: BatchDeletePayload) => {
+		setLoading(true);
+		await batchDeleteMessagesHook(payload);
+		deleteBoxCookies();
+		setMessage(null);
+		setMailbox(null);
+		setMessages(null);
+		setDeleteModal(false);
+		setLoading(false);
+	};
+
 	useEffect(() => {
-		if (mailbox === null) requestMailbox();
-		else if (messages === null) pullMailbox();
-	}, [mailbox, messages, requestMailbox, pullMailbox]);
+		if (mailbox === null) requestMailboxHook(true);
+	}, [mailbox, requestMailboxHook]);
+
+	useEffect(() => {
+		if (mailbox !== null && messages === null) pullMessagesHook();
+	}, [mailbox, messages, pullMessagesHook]);
 
 	//#endregion
 
 	return (
 		<Layout style={{ height: '100vh' }}>
-			<DeleteMailboxModal
-				visible={showModal}
-				onCancel={() => setModal(false)}
-				onOk={() =>
-					deleteMailbox().then(() => {
-						setModal(false);
-					})
-				}
-			/>
+			{messages !== null && (
+				<DeleteMailboxModal
+					visible={showDeleteModal}
+					onCancel={() => setDeleteModal(false)}
+					onOk={() =>
+						deleteMailboxHook(
+							messages.map(m => ({
+								uid: m.uid,
+								box: m.box,
+								hash: m.hash
+							}))
+						)
+					}
+				/>
+			)}
 			<Header
-				deleteMailbox={() => setModal(!showModal)}
-				pullMailbox={() => pullMailbox()}
+				askForDelete={() => setDeleteModal(true)}
+				pullMessages={pullMessagesHook}
 				mailbox={mailbox}
 			/>
 			<Layout.Content style={{ padding: '8px' }}>
@@ -103,21 +121,9 @@ const Index = () => {
 					style={{ height: '100%', overflow: 'auto' }}>
 					<Col span={8}>
 						<List
-							pulling={pulling}
-							setCurrent={uid => {
-								if (uid !== 0)
-									setMessage(
-										(messages || []).find(
-											item => item.uid === uid
-										) || null
-									);
-								else setMessage('welcome-mail');
-							}}
-							current={
-								message !== 'welcome-mail'
-									? message?.uid || null
-									: 0
-							}
+							loading={loading}
+							setCurrent={setMessage}
+							current={message}
 							messages={messages}
 							mailbox={mailbox}
 						/>
@@ -126,9 +132,8 @@ const Index = () => {
 						<MessageView
 							message={message}
 							mailbox={mailbox}
-							onDelete={(uid, box, hash) => {
-								if (uid === 0) setMessage(null);
-								else deleteMessage({ uid, box, hash });
+							onDelete={target => {
+								batchDeleteMessagesHook([target]);
 							}}
 						/>
 					</Col>

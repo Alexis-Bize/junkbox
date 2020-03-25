@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { Layout, PageHeader, Descriptions, Divider } from 'antd';
+import MessageHeader from './MessageHeader';
+import MessageBody from './MessageBody';
+import { Layout, Divider } from 'antd';
 import { setCookie } from '../../modules/cookies';
 import { MailboxResponse } from '../../types';
-import DeleteAction from './DeleteAction';
 
 import {
 	getBoxCreationDate,
 	computeDefaultSender,
-	getWelcomeMailItem
-} from '../../modules/helpers';
+	getWelcomeMailResponse
+} from '../../modules/mailbox';
 
 import {
 	GithubOutlined,
@@ -29,45 +30,10 @@ export type Props = {
 
 const WelcomeMessage = (props: Props) => {
 	const { mailbox, onDelete } = props;
-	const message = getWelcomeMailItem(mailbox);
+	const message = getWelcomeMailResponse(mailbox);
 
-	const header = (
-		<Layout.Content
-			style={{
-				backgroundColor: 'white',
-				marginBottom: '8px'
-			}}>
-			<PageHeader
-				title={message.header.subject}
-				extra={
-					<DeleteAction
-						onDelete={() => {
-							setCookie('box_welcome_mail_deleted', 'yes', {
-								sameSite: 'strict'
-							});
-
-							onDelete();
-						}}
-					/>
-				}>
-				<Descriptions size="small" column={1}>
-					<Descriptions.Item label="From">
-						{computeDefaultSender(mailbox)}
-					</Descriptions.Item>
-					<Descriptions.Item label="Date">
-						{getBoxCreationDate()}
-					</Descriptions.Item>
-				</Descriptions>
-			</PageHeader>
-		</Layout.Content>
-	);
-
-	const body = (
-		<Layout.Content
-			style={{
-				backgroundColor: 'white',
-				padding: '16px 24px'
-			}}>
+	const bodyContent = (
+		<div>
 			<Divider style={{ marginTop: 0 }} />
 			<h3>
 				<LockOutlined style={{ marginRight: '8px' }} /> Keep your real
@@ -123,14 +89,27 @@ const WelcomeMessage = (props: Props) => {
 				in your browser.
 			</p>
 			<Divider style={{ marginBottom: 0 }} />
-		</Layout.Content>
+		</div>
 	);
 
 	return (
-		<>
-			{header}
-			{body}
-		</>
+		<Layout.Content>
+			<MessageHeader
+				header={{
+					subject: message.header.subject,
+					from: computeDefaultSender(mailbox),
+					date: getBoxCreationDate()
+				}}
+				onDelete={() => {
+					setCookie('box_welcome_mail_deleted', 'yes', {
+						sameSite: 'strict'
+					});
+
+					onDelete();
+				}}
+			/>
+			<MessageBody body={bodyContent} />
+		</Layout.Content>
 	);
 };
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List as AntdList, Avatar } from 'antd';
 import { MessageResponse } from '../../types';
-import { getSenderInitials } from '../../modules/helpers';
+import { getSenderInitials } from '../../modules/mailbox';
 
 //#region typings
 

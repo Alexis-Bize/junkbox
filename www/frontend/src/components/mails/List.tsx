@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Spin, List as AntdList, Layout } from 'antd';
-import { MessagesList, Mailbox } from '../../types';
+import { MessagesList, Mailbox, MessageResponse } from '../../types';
 import { isWelcomeMailDeleted } from '../../modules/cookies';
-import { getWelcomeMailItem } from '../../modules/helpers';
+import { getWelcomeMailResponse } from '../../modules/mailbox';
 import ListElement from './ListElement';
 
 //#region typings
 
 type Props = {
-	setCurrent: (uid: number) => void;
-	pulling: boolean;
-	current: number | null;
+	setCurrent: (message: MessageResponse) => void;
+	loading: boolean;
+	current: MessageResponse | null;
 	messages: MessagesList;
 	mailbox: Mailbox;
 };
@@ -21,10 +21,10 @@ type Props = {
 const List = (props: Props) => {
 	const messages = props.messages || [];
 	const items = [...messages];
-	const { current, pulling, mailbox, setCurrent } = props;
+	const { current, loading, mailbox, setCurrent } = props;
 
 	if (mailbox !== null && isWelcomeMailDeleted() === false) {
-		items.push(getWelcomeMailItem(mailbox));
+		items.push(getWelcomeMailResponse(mailbox));
 	}
 
 	return (
@@ -33,16 +33,18 @@ const List = (props: Props) => {
 				backgroundColor: 'white',
 				height: '100%'
 			}}>
-			<Spin spinning={pulling}>
+			<Spin spinning={loading}>
 				<AntdList
 					itemLayout="horizontal"
 					dataSource={items}
 					renderItem={item => (
 						<ListElement
-							key={item.uid}
+							key={item.uid || ''}
 							message={item}
-							selected={item.uid === current}
-							onSelect={() => setCurrent(item.uid)}
+							selected={
+								current !== null && item.uid === current.uid
+							}
+							onSelect={() => setCurrent(item)}
 						/>
 					)}></AntdList>
 			</Spin>

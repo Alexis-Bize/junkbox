@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from '../components/Header';
 import List from '../components/mails/List';
 import MessageView from '../components/messages/MessageView';
@@ -15,6 +15,31 @@ import {
 	BatchDeletePayload
 } from '../modules/mailbox';
 
+//#region utild
+
+/**
+ * @see https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+ */
+const useInterval = (callback: () => void, delay: number | null = null) => {
+	const savedCallback = useRef<any>();
+
+	useEffect(() => {
+		savedCallback.current = callback;
+	}, [callback]);
+
+	useEffect(() => {
+		const tick = () => {
+			savedCallback.current();
+		};
+
+		if (delay !== null) {
+			let id = setInterval(tick, delay);
+			return () => clearInterval(id);
+		}
+	}, [delay]);
+};
+
+//#endregion
 //#region component
 
 const Index = () => {
@@ -51,15 +76,18 @@ const Index = () => {
 		[mailbox]
 	);
 
-	const pullMessagesHook = useCallback(async () => {
-		if (mailbox !== null) {
-			setLoading(true);
-			const response = await pullMessages(mailbox);
-			setMessages(response);
-			setWelcomeMessageHook();
-			setLoading(false);
-		}
-	}, [mailbox, setWelcomeMessageHook]);
+	const pullMessagesHook = useCallback(
+		async (ping = false) => {
+			if (mailbox !== null) {
+				if (ping === false) setLoading(true);
+				const response = await pullMessages(mailbox);
+				setMessages(response);
+				if (ping === false) setWelcomeMessageHook();
+				if (ping === false) setLoading(false);
+			}
+		},
+		[mailbox, setWelcomeMessageHook]
+	);
 
 	const batchDeleteMessagesHook = useCallback(
 		async (payload: BatchDeletePayload) => {
@@ -90,6 +118,10 @@ const Index = () => {
 	useEffect(() => {
 		if (mailbox !== null && messages === null) pullMessagesHook();
 	}, [mailbox, messages, pullMessagesHook]);
+
+	useInterval(() => {
+		if (loading === false) pullMessagesHook(true);
+	}, 5000);
 
 	//#endregion
 

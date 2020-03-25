@@ -4,8 +4,14 @@ import List from '../components/mails/List';
 import MessageView from '../components/messages/MessageView';
 import DeleteMailboxModal from '../components/modals/DeleteMailbox';
 import { Layout, Row, Col } from 'antd';
-import { isWelcomeMessageDeleted, deleteBoxCookies } from '../modules/cookies';
 import { Mailbox, Message, MessagesList, MailboxResponse } from '../types';
+
+import {
+	isWelcomeMessageDeleted,
+	isWelcomeMessageRead,
+	deleteBoxCookies,
+	markWelcomeMessageHasRead
+} from '../modules/cookies';
 
 import {
 	pullMessages,
@@ -51,14 +57,20 @@ const Index = () => {
 	const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 
-	const setWelcomeMessageHook = useCallback(() => {
+	const handleWelcomeMessageHook = useCallback(() => {
+		const isDeleted = isWelcomeMessageDeleted();
+		const isRead = isWelcomeMessageRead();
+
 		const shouldSetWelcomeMessage =
 			mailbox !== null &&
 			message === null &&
-			isWelcomeMessageDeleted() === false;
+			isDeleted === false &&
+			isRead === false;
 
 		if (shouldSetWelcomeMessage === true) {
 			setMessage(getWelcomeMailResponse(mailbox as MailboxResponse));
+		} else if (isRead === false) {
+			markWelcomeMessageHasRead();
 		}
 	}, [mailbox, message]);
 
@@ -77,16 +89,15 @@ const Index = () => {
 	);
 
 	const pullMessagesHook = useCallback(
-		async (ping = false) => {
+		async (silent = false) => {
 			if (mailbox !== null) {
-				setLoading(true);
+				if (silent === false) setLoading(true);
 				const response = await pullMessages(mailbox);
 				setMessages(response);
-				if (ping === false) setWelcomeMessageHook();
-				setLoading(false);
+				if (silent === false) setLoading(false);
 			}
 		},
-		[mailbox, setWelcomeMessageHook]
+		[mailbox]
 	);
 
 	const batchDeleteMessagesHook = useCallback(
@@ -117,7 +128,8 @@ const Index = () => {
 
 	useEffect(() => {
 		if (mailbox !== null && messages === null) pullMessagesHook();
-	}, [mailbox, messages, pullMessagesHook]);
+		else if (messages?.length === 0) handleWelcomeMessageHook();
+	}, [mailbox, messages, pullMessagesHook, handleWelcomeMessageHook]);
 
 	useInterval(() => {
 		if (loading === false) pullMessagesHook(true);
@@ -151,7 +163,10 @@ const Index = () => {
 				<Row
 					gutter={[8, 0]}
 					style={{ height: '100%', overflow: 'auto' }}>
-					<Col span={8}>
+					<Col
+						xs={{ order: 2, span: 24 }}
+						md={{ order: 1, span: 12 }}
+						lg={{ order: 1, span: 8 }}>
 						<List
 							loading={loading}
 							setCurrent={setMessage}
@@ -160,7 +175,10 @@ const Index = () => {
 							mailbox={mailbox}
 						/>
 					</Col>
-					<Col span={16}>
+					<Col
+						xs={{ order: 1, span: 24 }}
+						md={{ order: 2, span: 12 }}
+						lg={{ order: 2, span: 12 }}>
 						<MessageView
 							message={message}
 							mailbox={mailbox}

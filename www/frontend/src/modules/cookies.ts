@@ -33,6 +33,17 @@ export const setCookie = (
 export const isWelcomeMessageDeleted = () =>
 	getCookie('box_welcome_mail_deleted') === 'yes';
 
+export const isWelcomeMessageRead = () =>
+	getCookie('box_welcome_mail_read') === 'yes';
+
+export const markWelcomeMessageHasDeleted = () => {
+	setCookie('box_welcome_mail_deleted', 'yes', { sameSite: 'strict' });
+};
+
+export const markWelcomeMessageHasRead = () => {
+	setCookie('box_welcome_mail_read', 'yes', { sameSite: 'strict' });
+};
+
 export const deleteBoxCookies = () => {
 	document.cookie.split(';').forEach(c => {
 		document.cookie = c

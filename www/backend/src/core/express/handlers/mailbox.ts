@@ -56,6 +56,7 @@ const assignDefaultCookies = (res: Response, box: string, hash: string) => {
 
 	res.cookie('box_current', [box, hash].join('#'), defaultCookieOptions);
 	res.cookie('box_welcome_mail_deleted', 'no', defaultCookieOptions);
+	res.cookie('box_welcome_mail_read', 'no', defaultCookieOptions);
 };
 
 const onInvalidProperty = (res: Response, name: string) =>

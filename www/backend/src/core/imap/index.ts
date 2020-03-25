@@ -71,19 +71,20 @@ export const fetchForUids = (
 		const responses: FetchResponse[] = [];
 		const fetch = getInstance().seq.fetch(ids, {
 			markSeen: !!options.markSeen,
-			bodies: options.bodies
+			bodies: options.bodies,
+			struct: true
 		});
 
 		fetch.on('message', message => {
 			let messageUniqueId = 0;
 
-			const bodyBuffer: string[] = [];
+			const textBuffer: string[] = [];
 			const headerBuffer: string[] = [];
 
 			message.on('body', (stream, info) => {
 				stream.on('data', chunk => {
-					if (info.which === 'TEXT')
-						bodyBuffer.push(chunk.toString('utf-8'));
+					if (info.which.indexOf('HEADER') === -1)
+						textBuffer.push(chunk.toString('utf-8'));
 					else headerBuffer.push(chunk.toString('utf-8'));
 				});
 			});
@@ -95,7 +96,7 @@ export const fetchForUids = (
 
 			message.once('end', () => {
 				const hash = createSignedHash(joinIdBox(messageUniqueId, box));
-				const responseBody = bodyBuffer.join('') || void 0;
+				const responseBody = textBuffer.join('') || void 0;
 				const responseHeader = _parseRawHeader(
 					headerBuffer.join('') || void 0
 				);

@@ -2,7 +2,7 @@ import * as React from 'react';
 import MessageHeader from './MessageHeader';
 import MessageBody from './MessageBody';
 import { Layout, Divider } from 'antd';
-import { setCookie } from '../../modules/cookies';
+import { markWelcomeMessageHasDeleted } from '../../modules/cookies';
 import { MailboxResponse } from '../../types';
 
 import {
@@ -99,10 +99,7 @@ const WelcomeMessage = (props: Props) => {
 					date: getBoxCreationDate()
 				}}
 				onDelete={() => {
-					setCookie('box_welcome_mail_deleted', 'yes', {
-						sameSite: 'strict'
-					});
-
+					markWelcomeMessageHasDeleted();
 					onDelete();
 				}}
 			/>

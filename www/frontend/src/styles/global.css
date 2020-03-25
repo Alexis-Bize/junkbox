@@ -11,9 +11,26 @@
 }
 
 .ant-list-item:hover {
-    background-color: rgba(255, 228, 196, 0.1)
+    background-color: rgba(255, 228, 196, 0.1);
 }
 
 .ant-list-item.selected {
+    background-color: rgba(255, 228, 196, 0.1);
     border-right: 8px solid #ffcc66;
+}
+
+.ant-layout-header {
+    font-size: 20px;
+}
+
+.junkbox-title {
+    color: white;
+    font-size: 20px;
+    font-weight: 'bold';
+}
+
+@media screen and (max-width: 640px) {
+    .junkbox-title-alt {
+        display: none;
+    }
 }

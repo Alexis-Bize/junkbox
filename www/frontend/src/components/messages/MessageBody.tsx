@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactHtmlParser from 'react-html-parser';
 import { Layout, Divider } from 'antd';
 
 //#region typings
@@ -12,11 +13,9 @@ type Props = {
 
 const MessageBody = (props: Props) => {
 	const bodyElement =
-		typeof props.body === 'string' ? (
-			<div dangerouslySetInnerHTML={{ __html: props.body }} />
-		) : (
-			props.body
-		);
+		typeof props.body === 'string'
+			? ReactHtmlParser.default(props.body, { decodeEntities: true })
+			: props.body;
 
 	return (
 		<Layout.Content

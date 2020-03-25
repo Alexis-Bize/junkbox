@@ -21,7 +21,6 @@ const Header = (props: Props) => {
 
 	return (
 		<Layout.Header
-			id="junkbox-components-header"
 			style={{
 				height: 'auto',
 				paddingTop: '16px',
@@ -34,17 +33,12 @@ const Header = (props: Props) => {
 					maxWidth: '620px',
 					margin: '0 auto'
 				}}>
-				<div
-					style={{
-						fontSize: '20px',
-						fontWeight: 'bold',
-						color: 'white'
-					}}>
-					Your temporary{' '}
+				<div className="junkbox-title">
+					<span className="junkbox-title-alt">Your temporary</span>{' '}
 					<span style={{ color: '#FFCC66' }}>
 						Junkbox <DeleteOutlined />
 					</span>{' '}
-					email address
+					<span className="junkbox-title-alt">email address</span>
 				</div>
 				<Input
 					addonAfter={

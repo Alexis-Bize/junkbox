@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout } from 'antd';
+import { Layout, Divider } from 'antd';
 
 //#region typings
 
@@ -24,7 +24,9 @@ const MessageBody = (props: Props) => {
 				backgroundColor: 'white',
 				padding: '16px 24px'
 			}}>
+			<Divider style={{ marginTop: 0 }} />
 			{bodyElement}
+			<Divider style={{ marginBottom: 0 }} />
 		</Layout.Content>
 	);
 };

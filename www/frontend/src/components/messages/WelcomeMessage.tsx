@@ -34,7 +34,6 @@ const WelcomeMessage = (props: Props) => {
 
 	const bodyContent = (
 		<div>
-			<Divider style={{ marginTop: 0 }} />
 			<h3>
 				<LockOutlined style={{ marginRight: '8px' }} /> Keep your real
 				mailbox clean and secure
@@ -88,7 +87,6 @@ const WelcomeMessage = (props: Props) => {
 				By continuing to use this site, you accept our usage of cookies
 				in your browser.
 			</p>
-			<Divider style={{ marginBottom: 0 }} />
 		</div>
 	);
 

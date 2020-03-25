@@ -29,7 +29,7 @@ const List = (props: Props) => {
 	const { current, loading, mailbox, setCurrent } = props;
 
 	const pushWelcomeMessage =
-		messages.length !== 0 &&
+		props.messages !== null &&
 		mailbox !== null &&
 		isWelcomeMessageDeleted() === false;
 

@@ -79,11 +79,11 @@ const Index = () => {
 	const pullMessagesHook = useCallback(
 		async (ping = false) => {
 			if (mailbox !== null) {
-				if (ping === false) setLoading(true);
+				setLoading(true);
 				const response = await pullMessages(mailbox);
 				setMessages(response);
 				if (ping === false) setWelcomeMessageHook();
-				if (ping === false) setLoading(false);
+				setLoading(false);
 			}
 		},
 		[mailbox, setWelcomeMessageHook]

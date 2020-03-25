@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Spin, List as AntdList, Layout } from 'antd';
-import { MessagesList, Mailbox, MessageResponse } from '../../types';
-import { isWelcomeMailDeleted } from '../../modules/cookies';
+import {
+	MessagesList,
+	Mailbox,
+	MessageResponse,
+	MailboxResponse
+} from '../../types';
+import { isWelcomeMessageDeleted } from '../../modules/cookies';
 import { getWelcomeMailResponse } from '../../modules/mailbox';
 import ListElement from './ListElement';
 
@@ -23,8 +28,13 @@ const List = (props: Props) => {
 	const items = [...messages];
 	const { current, loading, mailbox, setCurrent } = props;
 
-	if (mailbox !== null && isWelcomeMailDeleted() === false) {
-		items.push(getWelcomeMailResponse(mailbox));
+	const pushWelcomeMessage =
+		messages.length !== 0 &&
+		mailbox !== null &&
+		isWelcomeMessageDeleted() === false;
+
+	if (pushWelcomeMessage === true) {
+		items.push(getWelcomeMailResponse(mailbox as MailboxResponse));
 	}
 
 	return (

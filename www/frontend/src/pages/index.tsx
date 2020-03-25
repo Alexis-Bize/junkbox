@@ -4,7 +4,7 @@ import List from '../components/mails/List';
 import MessageView from '../components/messages/MessageView';
 import DeleteMailboxModal from '../components/modals/DeleteMailbox';
 import { Layout, Row, Col } from 'antd';
-import { isWelcomeMailDeleted, deleteBoxCookies } from '../modules/cookies';
+import { isWelcomeMessageDeleted, deleteBoxCookies } from '../modules/cookies';
 import { Mailbox, Message, MessagesList, MailboxResponse } from '../types';
 
 import {
@@ -55,7 +55,7 @@ const Index = () => {
 		const shouldSetWelcomeMessage =
 			mailbox !== null &&
 			message === null &&
-			isWelcomeMailDeleted() === false;
+			isWelcomeMessageDeleted() === false;
 
 		if (shouldSetWelcomeMessage === true) {
 			setMessage(getWelcomeMailResponse(mailbox as MailboxResponse));

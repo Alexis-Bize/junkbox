@@ -30,7 +30,7 @@ export const setCookie = (
 	document.cookie = `${name}=${value};${parsedOptions.join(';')}`;
 };
 
-export const isWelcomeMailDeleted = () =>
+export const isWelcomeMessageDeleted = () =>
 	getCookie('box_welcome_mail_deleted') === 'yes';
 
 export const deleteBoxCookies = () => {

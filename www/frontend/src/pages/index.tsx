@@ -215,7 +215,13 @@ const Index = () => {
 						<Col span={layoutType === 'plain' ? 6 : 24}>
 							<List
 								loading={loading}
-								setCurrent={setMessage}
+								setCurrent={current =>
+									setMessage(
+										current.uid === message?.uid
+											? null
+											: current
+									)
+								}
 								current={message}
 								messages={messages}
 								mailbox={mailbox}

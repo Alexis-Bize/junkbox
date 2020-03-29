@@ -56,7 +56,7 @@ const WelcomeMessage = (props: Props) => {
 			<Divider />
 			<h3>
 				<GithubOutlined style={{ marginRight: '8px' }} /> Free and open
-				sourced!
+				source!
 			</h3>
 			<p>
 				<strong>Junkbox</strong> source code is available on{' '}

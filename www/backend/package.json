@@ -21,7 +21,8 @@
         "cookie-parser": "^1.4.5",
         "cors": "^2.8.5",
         "express": "^4.17.1",
-        "imap": "^0.8.19"
+        "imap": "^0.8.19",
+        "mailparser": "^2.7.7"
     },
     "devDependencies": {
         "@types/compression": "^1.7.0",
@@ -30,6 +31,7 @@
         "@types/dotenv": "^8.2.0",
         "@types/express": "^4.17.3",
         "@types/imap": "^0.8.30",
+        "@types/mailparser": "^2.7.0",
         "@types/node": "^13.9.2",
         "tsc-watch": "^4.2.3",
         "typescript": "^3.8.3"

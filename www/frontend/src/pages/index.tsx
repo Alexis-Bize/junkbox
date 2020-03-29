@@ -163,10 +163,6 @@ const Index = () => {
 		return () => window.removeEventListener('resize', current);
 	}, [resizeListener]);
 
-	useEffect(() => {
-		console.log(layoutType);
-	}, [layoutType]);
-
 	useInterval(() => {
 		if (loading === false) pullMessagesHook(true);
 	}, 5000);

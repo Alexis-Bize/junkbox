@@ -1,6 +1,6 @@
 import config from './config';
+import * as mailparser from 'mailparser';
 import { getInstance } from './initializer';
-import { parseHeader } from 'imap';
 import { joinIdBox } from './helpers';
 import { createSignedHash } from '../../modules/crypto';
 
@@ -16,8 +16,14 @@ export type FetchResponse = {
 	uid: number;
 	box: string;
 	hash: string;
-	header?: Header;
-	body?: string;
+	header: Header;
+	body: string;
+};
+
+export type Message = {
+	uid: number;
+	hash: string;
+	content: string;
 };
 
 //#endregion
@@ -34,26 +40,33 @@ const _searchInBoxByFlag = (box: string, flag: string): Promise<number[]> =>
 		);
 	});
 
-const _parseRawHeader = (rawHeader: string = '') => {
-	if (rawHeader.trim().length === 0) {
-		return;
-	}
+const _parseMessages = async (messages: Message[], box: string) => {
+	const parsed: FetchResponse[] = [];
 
-	const outputHeaders: Header = {
-		date: new Date().toISOString(),
-		subject: 'N/A',
-		from: 'unknown'
-	};
+	await Promise.all(
+		messages.map(message => mailparser.simpleParser(message.content))
+	).then(contents => {
+		contents.forEach((content, index) => {
+			parsed.push({
+				uid: messages[index].uid,
+				hash: messages[index].hash,
+				box,
+				header: {
+					date: content.date
+						? content.date.toISOString()
+						: new Date().toISOString(),
+					subject: content.subject,
+					from: content.from.text
+				},
+				body:
+					typeof content.html === 'string'
+						? content.html
+						: content.text
+			});
+		});
+	});
 
-	const parse = parseHeader(rawHeader);
-
-	outputHeaders.date = new Date(
-		parse.date[0] || outputHeaders.date
-	).toISOString();
-	outputHeaders.subject = parse.subject[0] || outputHeaders.subject;
-	outputHeaders.from = parse.from[0] || '';
-
-	return outputHeaders;
+	return parsed;
 };
 
 //#endregion
@@ -65,27 +78,23 @@ export const pullUidsForBox = (box: string) =>
 export const fetchForUids = (
 	ids: number[],
 	box: string,
-	options: { bodies?: string[] | string; markSeen?: boolean }
+	options: { markSeen?: boolean }
 ): Promise<FetchResponse[]> =>
 	new Promise((resolve, reject) => {
-		const responses: FetchResponse[] = [];
+		const messages: Message[] = [];
 		const fetch = getInstance().seq.fetch(ids, {
 			markSeen: !!options.markSeen,
-			bodies: options.bodies,
+			bodies: '',
 			struct: true
 		});
 
 		fetch.on('message', message => {
 			let messageUniqueId = 0;
+			const parts: string[] = [];
 
-			const textBuffer: string[] = [];
-			const headerBuffer: string[] = [];
-
-			message.on('body', (stream, info) => {
+			message.on('body', stream => {
 				stream.on('data', chunk => {
-					if (info.which.indexOf('HEADER') === -1)
-						textBuffer.push(chunk.toString('utf-8'));
-					else headerBuffer.push(chunk.toString('utf-8'));
+					parts.push(chunk.toString('utf-8'));
 				});
 			});
 
@@ -95,24 +104,20 @@ export const fetchForUids = (
 			});
 
 			message.once('end', () => {
-				const hash = createSignedHash(joinIdBox(messageUniqueId, box));
-				const responseBody = textBuffer.join('') || void 0;
-				const responseHeader = _parseRawHeader(
-					headerBuffer.join('') || void 0
-				);
-
-				responses.push({
+				messages.push({
 					uid: messageUniqueId,
-					box,
-					hash,
-					header: responseHeader,
-					body: responseBody
+					hash: createSignedHash(joinIdBox(messageUniqueId, box)),
+					content: parts.join('')
 				});
 			});
 		});
 
 		fetch.once('error', reject);
-		fetch.once('end', () => resolve(responses.reverse()));
+		fetch.once('end', () => {
+			return _parseMessages(messages, box).then(parsed =>
+				resolve(parsed.reverse())
+			);
+		});
 	});
 
 export const deleteByUids = (uids: number[]) =>

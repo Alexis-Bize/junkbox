@@ -108,11 +108,7 @@ export const handlePullBox = async (req: Request, res: Response) => {
 		return res.send(response);
 	}
 
-	response.items = await fetchForUids(uids, box, {
-		bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT'],
-		markSeen: true
-	});
-
+	response.items = await fetchForUids(uids, box, { markSeen: true });
 	response.count = response.items.length;
 
 	return res.send(response);

@@ -1,10 +1,19 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import List from '../components/mails/List';
 import MessageView from '../components/messages/MessageView';
 import DeleteMailboxModal from '../components/modals/DeleteMailbox';
-import { Layout, Row, Col } from 'antd';
-import { Mailbox, Message, MessagesList, MailboxResponse } from '../types';
+import { Layout, Row, Col, Button } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+
+import {
+	Mailbox,
+	Message,
+	MessagesList,
+	MailboxResponse,
+	LayoutType
+} from '../types';
 
 import {
 	isWelcomeMessageDeleted,
@@ -21,7 +30,7 @@ import {
 	BatchDeletePayload
 } from '../modules/mailbox';
 
-//#region utild
+//#region utils
 
 /**
  * @see https://overreacted.io/making-setinterval-declarative-with-react-hooks/
@@ -45,17 +54,31 @@ const useInterval = (callback: () => void, delay: number | null = null) => {
 	}, [delay]);
 };
 
+const getLayoutType = (): LayoutType =>
+	window.matchMedia('(min-width: 1280px)').matches === true
+		? 'plain'
+		: 'overlay';
+
 //#endregion
 //#region component
 
 const Index = () => {
-	//#region hooks
+	//#region states
 
 	const [mailbox, setMailbox] = useState<Mailbox>(null);
 	const [message, setMessage] = useState<Message>(null);
 	const [messages, setMessages] = useState<MessagesList>(null);
+	const [layoutType, setLayoutType] = useState<LayoutType>(getLayoutType());
 	const [showDeleteModal, setDeleteModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
+
+	//#endregion
+	//#region states
+
+	const resizeListener = useRef(() => setLayoutType(getLayoutType()));
+
+	//#endregion
+	//#region hook functions
 
 	const handleWelcomeMessageHook = useCallback(() => {
 		const isDeleted = isWelcomeMessageDeleted();
@@ -122,6 +145,9 @@ const Index = () => {
 		setLoading(false);
 	};
 
+	//#endregion
+	//#region effects
+
 	useEffect(() => {
 		if (mailbox === null) requestMailboxHook(true);
 	}, [mailbox, requestMailboxHook]);
@@ -131,11 +157,33 @@ const Index = () => {
 		else if (messages?.length === 0) handleWelcomeMessageHook();
 	}, [mailbox, messages, pullMessagesHook, handleWelcomeMessageHook]);
 
+	useEffect(() => {
+		const { current } = resizeListener;
+		if (current !== null) window.addEventListener('resize', current);
+		return () => window.removeEventListener('resize', current);
+	}, [resizeListener]);
+
+	useEffect(() => {
+		console.log(layoutType);
+	}, [layoutType]);
+
 	useInterval(() => {
 		if (loading === false) pullMessagesHook(true);
 	}, 5000);
 
 	//#endregion
+	//#region render
+
+	const shouldDisplayList =
+		layoutType === 'plain' ||
+		(layoutType === 'overlay' && message === null);
+
+	const shouldDisplayMessage =
+		layoutType === 'plain' ||
+		(layoutType === 'overlay' && message !== null);
+
+	const shouldDisplayBackButton =
+		layoutType === 'overlay' && message !== null;
 
 	return (
 		<Layout style={{ height: '100vh' }}>
@@ -156,41 +204,50 @@ const Index = () => {
 			)}
 			<Header
 				askForDelete={() => setDeleteModal(true)}
-				pullMessages={pullMessagesHook}
+				pullMessages={() => pullMessagesHook()}
 				mailbox={mailbox}
 			/>
 			<Layout.Content style={{ padding: '8px' }}>
 				<Row
 					gutter={[8, 0]}
 					style={{ height: '100%', overflow: 'auto' }}>
-					<Col
-						xs={{ order: 2, span: 24 }}
-						md={{ order: 1, span: 12 }}
-						lg={{ order: 1, span: 8 }}>
-						<List
-							loading={loading}
-							setCurrent={setMessage}
-							current={message}
-							messages={messages}
-							mailbox={mailbox}
-						/>
-					</Col>
-					<Col
-						xs={{ order: 1, span: 24 }}
-						md={{ order: 2, span: 12 }}
-						lg={{ order: 2, span: 12 }}>
-						<MessageView
-							message={message}
-							mailbox={mailbox}
-							onDelete={target => {
-								batchDeleteMessagesHook([target]);
-							}}
-						/>
-					</Col>
+					{shouldDisplayList === true && (
+						<Col span={layoutType === 'plain' ? 6 : 24}>
+							<List
+								loading={loading}
+								setCurrent={setMessage}
+								current={message}
+								messages={messages}
+								mailbox={mailbox}
+							/>
+						</Col>
+					)}
+					{shouldDisplayMessage && (
+						<Col span={layoutType === 'plain' ? 18 : 24}>
+							{shouldDisplayBackButton === true && (
+								<Button
+									style={{ marginBottom: '8px' }}
+									icon={<ArrowLeftOutlined />}
+									onClick={() => setMessage(null)}>
+									Back to Inbox
+								</Button>
+							)}
+							<MessageView
+								message={message}
+								mailbox={mailbox}
+								onDelete={target => {
+									batchDeleteMessagesHook([target]);
+								}}
+							/>
+						</Col>
+					)}
 				</Row>
 			</Layout.Content>
+			<Footer />
 		</Layout>
 	);
+
+	//#endregion
 };
 
 export default Index;

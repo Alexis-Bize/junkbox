@@ -23,7 +23,8 @@ const ListElement = (props: Props) => {
 
 	return (
 		<AntdList.Item
-			className={`${selected && 'selected'}`}
+			className={selected === true ? 'selected' : ''}
+			style={{ wordBreak: 'break-word', overflow: 'hidden' }}
 			onClick={onSelect}>
 			<AntdList.Item.Meta
 				avatar={

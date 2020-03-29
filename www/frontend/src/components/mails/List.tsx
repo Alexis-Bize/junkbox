@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { Spin, List as AntdList, Layout } from 'antd';
+import { isWelcomeMessageDeleted } from '../../modules/cookies';
+import { getWelcomeMailResponse } from '../../modules/mailbox';
+import ListElement from './ListElement';
+
 import {
 	MessagesList,
 	Mailbox,
 	MessageResponse,
 	MailboxResponse
 } from '../../types';
-import { isWelcomeMessageDeleted } from '../../modules/cookies';
-import { getWelcomeMailResponse } from '../../modules/mailbox';
-import ListElement from './ListElement';
 
 //#region typings
 
@@ -41,10 +42,16 @@ const List = (props: Props) => {
 		<Layout.Content
 			style={{
 				backgroundColor: 'white',
+				padding: '8px',
 				height: '100%'
 			}}>
 			<Spin spinning={loading}>
 				<AntdList
+					pagination={{
+						size: 'small',
+						position: 'bottom',
+						defaultPageSize: 15
+					}}
 					itemLayout="horizontal"
 					dataSource={items}
 					renderItem={item => (

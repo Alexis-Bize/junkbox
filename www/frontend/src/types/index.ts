@@ -22,3 +22,4 @@ export type Mailbox = null | MailboxResponse;
 export type Message = null | MessageResponse;
 export type MessagesList = null | MessagesListResponse;
 export type WelcomeMailItem = Omit<Required<MessageResponse>, 'body'>;
+export type LayoutType = 'plain' | 'overlay';

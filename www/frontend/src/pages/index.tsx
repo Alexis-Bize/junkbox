@@ -182,7 +182,7 @@ const Index = () => {
 		layoutType === 'overlay' && message !== null;
 
 	return (
-		<Layout style={{ height: '100vh' }}>
+		<Layout id="junkbox-wrapper">
 			{messages !== null && (
 				<DeleteMailboxModal
 					visible={showDeleteModal}
@@ -204,9 +204,7 @@ const Index = () => {
 				mailbox={mailbox}
 			/>
 			<Layout.Content style={{ padding: '8px' }}>
-				<Row
-					gutter={[8, 0]}
-					style={{ height: '100%', overflow: 'auto' }}>
+				<Row gutter={[8, 0]}>
 					{shouldDisplayList === true && (
 						<Col span={layoutType === 'plain' ? 6 : 24}>
 							<List

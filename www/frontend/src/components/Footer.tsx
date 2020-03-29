@@ -4,7 +4,14 @@ import { Layout } from 'antd';
 //#region component
 
 const Footer = () => (
-	<Layout.Footer style={{ textAlign: 'center', fontSize: '12px' }}>
+	<Layout.Footer
+		style={{
+			bottom: 0,
+			textAlign: 'center',
+			fontSize: '12px',
+			position: 'absolute',
+			width: '100%'
+		}}>
 		Created with ♥ by{' '}
 		<a
 			href="https://alexis-bize.io"

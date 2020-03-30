@@ -1,4 +1,4 @@
 .now
-.env-development
+.env.*
 node_modules
 dist

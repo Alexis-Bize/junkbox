@@ -26,7 +26,7 @@ HASH_KEY=""                         # Secret key to create hashes to prevent una
 UNIQUE_BOX="no"                     # [yes/no] Use an unique mailbox
 UNIQUE_BOX_VALUE="junkbox-demo"     # Unique mailbox
 # Serverless deployment
-NOW_LAMBDA="yes"                    # Defined in now.json - Use zeit.co severless routing logic
+SERVERLESS="yes"                    # Defined in now.json - Use zeit.co severless routing logic
 ```
 
 ### Build and start

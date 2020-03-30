@@ -31,7 +31,7 @@ export const assignExpressHandlers = (app: Express) => {
 	loadMiddlewares(app);
 
 	const handleFrontendBuild =
-		process.env.NOW_LAMBDA !== 'yes' &&
+		process.env.SERVERLESS !== 'yes' &&
 		process.env.NODE_ENV === 'production';
 
 	/**

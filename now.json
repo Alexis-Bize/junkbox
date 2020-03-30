@@ -2,7 +2,7 @@
 	"public": true,
 	"version": 2,
 	"env": {
-		"NOW_LAMBDA": "yes",
+		"SERVERLESS": "yes",
 		"IMAP_USER": "@junkbox-imap-user",
 		"IMAP_PASSWORD": "@junkbox-imap-password",
 		"IMAP_HOST": "@junkbox-imap-host",

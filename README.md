@@ -1,6 +1,9 @@
 # Junkbox - Disposable email service
 
+<p align="center">
 ![Junkbox.one](./junkbox-logo.png)
+</p>
+
 Deploy your own disposable email service based on an existing IMAP server.
 
 ![Junkbox.one](./junkbox-preview.png)

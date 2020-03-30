@@ -6,7 +6,7 @@ Makefile
 .env.*
 *.md
 
-junkbox-preview.png
+./*.png
 .editorconfig
 .prettierrc
 .gitignore

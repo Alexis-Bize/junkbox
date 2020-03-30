@@ -4,7 +4,6 @@
 
 ### Preview
 ![Junkbox.one](./junkbox-preview.png)
-Demo: **[Junkbox](https://junkbox.one)**
 
 ### Requirements
 * An IMAP server (Your own or one created by a provider)

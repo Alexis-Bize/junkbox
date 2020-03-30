@@ -1,5 +1,12 @@
+node_modules/
+build/
+dist/
+
+Makefile
+.env.*
+*.md
+
+junkbox-preview.png
 .editorconfig
 .prettierrc
 .gitignore
-.env.*
-README.md
